@@ -40,9 +40,9 @@ namespace TETCSharpClient
         #region Public methods
 
         public bool Connect()
-      {
-        return Connect(GazeApiSettings.Host, GazeApiSettings.Port);
-      }
+        {
+            return Connect(GazeApiSettings.Host, GazeApiSettings.Port);
+        }
 
         public bool Connect(string host, int port)
         {
