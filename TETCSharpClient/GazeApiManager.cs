@@ -40,9 +40,9 @@ namespace TETCSharpClient
         #region Public methods
 
         public bool Connect()
-	    {
-		    return Connect(GazeApiSettings.Host, GazeApiSettings.Port);
-	    }
+      {
+        return Connect(GazeApiSettings.Host, GazeApiSettings.Port);
+      }
 
         public bool Connect(string host, int port)
         {
@@ -67,46 +67,46 @@ namespace TETCSharpClient
             }
             return true;
         }
-	
-	    public void Close()
-	    {
-		    try 
-		    {
-			    if(null != incomingStreamHandler)
-				    incomingStreamHandler.Stop();
-			
-			    if(null != outgoingStreamHandler)
-                    outgoingStreamHandler.Stop();
-			
-			    if(null != socket)
-				    socket.Close();
+  
+      public void Close()
+      {
+        try 
+        {
+            if(null != incomingStreamHandler)
+                incomingStreamHandler.Stop();
 
-                if (null != requestQueue)
-                    requestQueue.Clear();
-		    }
-		    catch (Exception e) 
-		    {
-                Debug.WriteLine("Error closing socket: " + e.Message);
-		    }
-	    }
-	
-	    public bool IsConnected()
-	    {
-		    if(null != socket)
-			    return socket.Connected;
-				
-		    return false;
-	    }
+            if(null != outgoingStreamHandler)
+                outgoingStreamHandler.Stop();
 
-	    protected void Request(string request)
-	    {
+            if(null != socket)
+                socket.Close();
+
+            if (null != requestQueue)
+                requestQueue.Clear();
+        }
+        catch (Exception e) 
+        {
+            Debug.WriteLine("Error closing socket: " + e.Message);
+        }
+      }
+  
+      public bool IsConnected()
+      {
+        if(null != socket)
+            return socket.Connected;
+        
+        return false;
+      }
+
+      protected void Request(string request)
+      {
             lock (((ICollection)requestQueue).SyncRoot)
             {
                 requestQueue.Enqueue(request);
                 //Signal Event that queue is populated
                 outEvent.GetUpdateHandle().Set();
             }
-	    }
+      }
 
         public void RequestTracker(GazeManager.ClientMode mode, int version)
         {
@@ -123,18 +123,18 @@ namespace TETCSharpClient
             TrackerGetRequest gr = new TrackerGetRequest();
 
             gr.Values = new[]
-			{
-				Protocol.TRACKER_HEARTBEATINTERVAL,
-				Protocol.TRACKER_ISCALIBRATED,
-				Protocol.TRACKER_ISCALIBRATING,
-				Protocol.TRACKER_VERSION,
-				Protocol.TRACKER_SCREEN_INDEX,
+            {
+                Protocol.TRACKER_HEARTBEATINTERVAL,
+                Protocol.TRACKER_ISCALIBRATED,
+                Protocol.TRACKER_ISCALIBRATING,
+                Protocol.TRACKER_VERSION,
+                Protocol.TRACKER_SCREEN_INDEX,
                 Protocol.TRACKER_SCREEN_RESOLUTION_WIDTH,
                 Protocol.TRACKER_SCREEN_RESOLUTION_HEIGHT,
                 Protocol.TRACKER_SCREEN_PHYSICAL_WIDTH,
                 Protocol.TRACKER_SCREEN_PHYSICAL_HEIGHT,
-				Protocol.TRACKER_MODE_PUSH
-			};
+                Protocol.TRACKER_MODE_PUSH
+            };
 
             Request(JsonConvert.SerializeObject(gr));
         }
@@ -144,10 +144,10 @@ namespace TETCSharpClient
             TrackerGetRequest gr = new TrackerGetRequest();
 
             gr.Values = new[]
-			{
-				Protocol.TRACKER_ISCALIBRATED,
-				Protocol.TRACKER_ISCALIBRATING
-			};
+            {
+                Protocol.TRACKER_ISCALIBRATED,
+                Protocol.TRACKER_ISCALIBRATING
+            };
 
             Request(JsonConvert.SerializeObject(gr));
         }
@@ -157,13 +157,13 @@ namespace TETCSharpClient
             TrackerGetRequest gr = new TrackerGetRequest();
 
             gr.Values = new[]
-			{
-				Protocol.TRACKER_SCREEN_INDEX,
+            {
+                Protocol.TRACKER_SCREEN_INDEX,
                 Protocol.TRACKER_SCREEN_RESOLUTION_WIDTH,
                 Protocol.TRACKER_SCREEN_RESOLUTION_HEIGHT,
                 Protocol.TRACKER_SCREEN_PHYSICAL_WIDTH,
                 Protocol.TRACKER_SCREEN_PHYSICAL_HEIGHT
-			};
+            };
 
             Request(JsonConvert.SerializeObject(gr));
         }
