@@ -1,0 +1,53 @@
+﻿using System.ComponentModel;
+using Newtonsoft.Json;
+using TETCSharpClient.Data;
+
+namespace TETCSharpClient.Reply
+{
+    internal class TrackerGetReplyValues
+    {
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_MODE_PUSH)]
+        public bool? Push { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_HEARTBEATINTERVAL)]
+        public int? HeartbeatInterval { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_VERSION)]
+        public int? Version { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_ISCALIBRATING)]
+        public bool? IsCalibrating { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_ISCALIBRATED)]
+        public bool? IsCalibrated { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_SCREEN_INDEX)]
+        public int? ScreenIndex { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_SCREEN_RESOLUTION_WIDTH)]
+        public int? ScreenResolutionWidth { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_SCREEN_RESOLUTION_HEIGHT)]
+        public int? ScreenResolutionHeight { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_SCREEN_PHYSICAL_WIDTH)]
+        public float? ScreenPhysicalWidth { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_SCREEN_PHYSICAL_HEIGHT)]
+        public float? ScreenPhysicalHeight { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_FRAME)]
+        public GazeData Frame { set; get; }
+    }
+}
