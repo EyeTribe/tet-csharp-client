@@ -19,12 +19,24 @@ namespace TETCSharpClient.Reply
         public int? Version { set; get; }
 
         [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_TRACKERSTATE)]
+        public int? TrackerState { set; get; }
+
+        [DefaultValue(null)]
         [JsonProperty(PropertyName = Protocol.TRACKER_ISCALIBRATING)]
         public bool? IsCalibrating { set; get; }
 
         [DefaultValue(null)]
         [JsonProperty(PropertyName = Protocol.TRACKER_ISCALIBRATED)]
         public bool? IsCalibrated { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_CALIBRATIONRESULT)]
+        public CalibrationResult CalibrationResult { set; get; }
+
+        [DefaultValue(null)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_FRAMERATE)]
+        public int? FrameRate { set; get; }
 
         [DefaultValue(null)]
         [JsonProperty(PropertyName = Protocol.TRACKER_SCREEN_INDEX)]

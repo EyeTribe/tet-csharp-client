@@ -13,5 +13,4 @@ namespace TETCSharpClient.Reply
         [JsonProperty(PropertyName = Protocol.KEY_STATUSCODE)]
         public int StatusCode { set; get; }
     }
-
 }

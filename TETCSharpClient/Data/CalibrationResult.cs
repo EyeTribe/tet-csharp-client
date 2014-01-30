@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace TETCSharpClient.Data
 {
     /// <summary>
-    /// GazeCalibrationResult holds outcome of a calibration procedure. It defines if
+    /// CalibrationResult holds outcome of a calibration procedure. It defines if
     /// calibration was successful or if certain calibration points needs resampling.
     /// </summary>
     public class CalibrationResult
@@ -12,31 +12,31 @@ namespace TETCSharpClient.Data
         /// <summary>
         /// Was the calibration sucessful?
         /// </summary>
-        [JsonProperty(PropertyName = Protocol.CALIBRESULT_KEY_RESULT)]
+        [JsonProperty(PropertyName = Protocol.CALIBRESULT_RESULT)]
         public bool Result { get; set; }
 
         /// <summary>
         /// average error in degrees
         /// </summary>
-        [JsonProperty(PropertyName = Protocol.CALIBRESULT_KEY_AVERAGE_ERROR_DEGREES)]
+        [JsonProperty(PropertyName = Protocol.CALIBRESULT_AVERAGE_ERROR_DEGREES)]
         public double AverageErrorDegree { get; set; }
 
         /// <summary>
         /// average error in degs, left eye
         /// </summary>
-        [JsonProperty(PropertyName = Protocol.CALIBRESULT_KEY_AVERAGE_ERROR_LEFT_DEGREES)]
+        [JsonProperty(PropertyName = Protocol.CALIBRESULT_AVERAGE_ERROR_LEFT_DEGREES)]
         public double AverageErrorDegreeLeft { get; set; }
 
         /// <summary>
         /// average error in degs, right eye
         /// </summary>
-        [JsonProperty(PropertyName = Protocol.CALIBRESULT_KEY_AVERAGE_ERROR_RIGHT_DEGREES)]
+        [JsonProperty(PropertyName = Protocol.CALIBRESULT_AVERAGE_ERROR_RIGHT_DEGREES)]
         public double AverageErrorDegreeRight { get; set; }
 
         /// <summary>
         /// complete list of calibrationpoints
         /// </summary>
-        [JsonProperty(PropertyName = Protocol.CALIBRESULT_KEY_CALIBRATION_POINTS)]
+        [JsonProperty(PropertyName = Protocol.CALIBRESULT_CALIBRATION_POINTS)]
         public CalibrationPoint[] Calibpoints { get; set; }
 
         public CalibrationResult()

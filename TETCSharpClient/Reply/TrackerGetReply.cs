@@ -12,5 +12,4 @@ namespace TETCSharpClient.Reply
         [JsonProperty(PropertyName = Protocol.KEY_VALUES)]
         public TrackerGetReplyValues Values { set; get; }
     }
-
 }

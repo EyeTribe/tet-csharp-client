@@ -14,12 +14,11 @@ namespace TETCSharpClient
     internal class GazeBroadcaster
     {
         private readonly WaitHandleWrap events;
-        private readonly List<IGazeUpdateListener> gazeListeners;
+        private readonly List<IGazeListener> gazeListeners;
         private readonly FixedSizeQueue<GazeData> queue;
-
         private Thread workerThread;
 
-        public GazeBroadcaster(FixedSizeQueue<GazeData> queue, List<IGazeUpdateListener> gazeListeners, WaitHandleWrap events)
+        public GazeBroadcaster(FixedSizeQueue<GazeData> queue, List<IGazeListener> gazeListeners, WaitHandleWrap events)
         {
             this.gazeListeners = gazeListeners;
             this.queue = queue;
@@ -62,14 +61,14 @@ namespace TETCSharpClient
                     {
                         //Use latest in queue
                         if (queue.Count > 0)
-                            gaze = queue.Last();
+                            gaze = queue.Last();  //.ToArray()[queue.Count - 1];  //.Last();
                     }
 
                     lock (((ICollection)gazeListeners).SyncRoot)
                     {
                         if (null != gaze)
                         {
-                            foreach (IGazeUpdateListener listener in gazeListeners)
+                            foreach (IGazeListener listener in gazeListeners)
                             {
                                 try
                                 {
@@ -77,7 +76,7 @@ namespace TETCSharpClient
                                 }
                                 catch (Exception e)
                                 {
-                                    Debug.WriteLine("Exception while calling IGazeUpdateListener.OnGazeUpdate() on listener " + listener + ": " + e.Message);
+                                    Debug.WriteLine("Exception while calling IGazeListener.OnGazeUpdate() on listener " + listener + ": " + e.Message);
                                 }
                             }
                         }

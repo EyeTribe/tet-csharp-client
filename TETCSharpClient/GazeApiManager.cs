@@ -16,6 +16,13 @@ namespace TETCSharpClient
     // </summary>
     internal class GazeApiManager
     {
+        #region Constants
+
+        internal const string DEFAULT_SERVER_HOST = "localhost";
+        internal const int DEFAULT_SERVER_PORT = 6555;
+
+        #endregion
+
         #region Variables
 
         private TcpClient socket;
@@ -38,11 +45,6 @@ namespace TETCSharpClient
         #endregion
 
         #region Public methods
-
-        public bool Connect()
-        {
-            return Connect(GazeApiSettings.Host, GazeApiSettings.Port);
-        }
 
         public bool Connect(string host, int port)
         {
@@ -67,52 +69,52 @@ namespace TETCSharpClient
             }
             return true;
         }
-  
-      public void Close()
-      {
-        try 
-        {
-            if(null != incomingStreamHandler)
-                incomingStreamHandler.Stop();
+	
+	    public void Close()
+	    {
+		    try 
+		    {
+			    if(null != incomingStreamHandler)
+				    incomingStreamHandler.Stop();
+			
+			    if(null != outgoingStreamHandler)
+                    outgoingStreamHandler.Stop();
+			
+			    if(null != socket)
+				    socket.Close();
 
-            if(null != outgoingStreamHandler)
-                outgoingStreamHandler.Stop();
+                if (null != requestQueue)
+                    requestQueue.Clear();
+		    }
+		    catch (Exception e) 
+		    {
+                Debug.WriteLine("Error closing socket: " + e.Message);
+		    }
+	    }
+	
+	    public bool IsConnected()
+	    {
+		    if(null != socket)
+			    return socket.Connected;
+				
+		    return false;
+	    }
 
-            if(null != socket)
-                socket.Close();
-
-            if (null != requestQueue)
-                requestQueue.Clear();
-        }
-        catch (Exception e) 
-        {
-            Debug.WriteLine("Error closing socket: " + e.Message);
-        }
-      }
-  
-      public bool IsConnected()
-      {
-        if(null != socket)
-            return socket.Connected;
-        
-        return false;
-      }
-
-      protected void Request(string request)
-      {
+	    protected void Request(string request)
+	    {
             lock (((ICollection)requestQueue).SyncRoot)
             {
                 requestQueue.Enqueue(request);
                 //Signal Event that queue is populated
                 outEvent.GetUpdateHandle().Set();
             }
-      }
+	    }
 
-        public void RequestTracker(GazeManager.ClientMode mode, int version)
+        public void RequestTracker(GazeManager.ClientMode mode, GazeManager.ApiVersion version)
         {
             TrackerSetRequest gr = new TrackerSetRequest();
 
-            gr.Values.Version = version;
+            gr.Values.Version = (int)version.GetTypeCode();
             gr.Values.Push = mode == GazeManager.ClientMode.Push;
 
             Request(JsonConvert.SerializeObject(gr));
@@ -123,18 +125,21 @@ namespace TETCSharpClient
             TrackerGetRequest gr = new TrackerGetRequest();
 
             gr.Values = new[]
-            {
-                Protocol.TRACKER_HEARTBEATINTERVAL,
-                Protocol.TRACKER_ISCALIBRATED,
-                Protocol.TRACKER_ISCALIBRATING,
-                Protocol.TRACKER_VERSION,
-                Protocol.TRACKER_SCREEN_INDEX,
+			{
+				Protocol.TRACKER_HEARTBEATINTERVAL,
+				Protocol.TRACKER_ISCALIBRATED,
+				Protocol.TRACKER_ISCALIBRATING,
+                Protocol.TRACKER_TRACKERSTATE,
+				Protocol.TRACKER_SCREEN_INDEX,
                 Protocol.TRACKER_SCREEN_RESOLUTION_WIDTH,
                 Protocol.TRACKER_SCREEN_RESOLUTION_HEIGHT,
                 Protocol.TRACKER_SCREEN_PHYSICAL_WIDTH,
                 Protocol.TRACKER_SCREEN_PHYSICAL_HEIGHT,
-                Protocol.TRACKER_MODE_PUSH
-            };
+                Protocol.TRACKER_CALIBRATIONRESULT,
+                Protocol.TRACKER_FRAMERATE,
+				Protocol.TRACKER_VERSION,
+				Protocol.TRACKER_MODE_PUSH
+			};
 
             Request(JsonConvert.SerializeObject(gr));
         }
@@ -144,10 +149,11 @@ namespace TETCSharpClient
             TrackerGetRequest gr = new TrackerGetRequest();
 
             gr.Values = new[]
-            {
-                Protocol.TRACKER_ISCALIBRATED,
-                Protocol.TRACKER_ISCALIBRATING
-            };
+			{
+				Protocol.TRACKER_ISCALIBRATED,
+				Protocol.TRACKER_ISCALIBRATING,
+                Protocol.TRACKER_CALIBRATIONRESULT
+			};
 
             Request(JsonConvert.SerializeObject(gr));
         }
@@ -157,13 +163,26 @@ namespace TETCSharpClient
             TrackerGetRequest gr = new TrackerGetRequest();
 
             gr.Values = new[]
-            {
-                Protocol.TRACKER_SCREEN_INDEX,
+			{
+				Protocol.TRACKER_SCREEN_INDEX,
                 Protocol.TRACKER_SCREEN_RESOLUTION_WIDTH,
                 Protocol.TRACKER_SCREEN_RESOLUTION_HEIGHT,
                 Protocol.TRACKER_SCREEN_PHYSICAL_WIDTH,
                 Protocol.TRACKER_SCREEN_PHYSICAL_HEIGHT
-            };
+			};
+
+            Request(JsonConvert.SerializeObject(gr));
+        }
+
+        public void RequestTrackerState()
+        {
+            TrackerGetRequest gr = new TrackerGetRequest();
+
+            gr.Values = new[]
+			{
+				Protocol.TRACKER_TRACKERSTATE,
+                Protocol.TRACKER_FRAMERATE
+			};
 
             Request(JsonConvert.SerializeObject(gr));
         }
@@ -203,7 +222,7 @@ namespace TETCSharpClient
             Request(JsonConvert.SerializeObject(gr));
         }
 
-        public void RequestCalibrationReset()
+        public void RequestCalibrationClear()
         {
             RequestBase gr = new RequestBase();
             gr.Category = Protocol.CATEGORY_CALIBRATION;

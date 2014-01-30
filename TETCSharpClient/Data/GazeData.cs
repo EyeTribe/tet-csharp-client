@@ -9,6 +9,8 @@ namespace TETCSharpClient.Data
     /// </summary>
     public class GazeData
     {
+        #region Public properties
+
         /// <summary>
         /// Set when engine is calibrated and glint tracking successfully.
         /// </summary>
@@ -56,13 +58,13 @@ namespace TETCSharpClient.Data
         /// Left GazeEye object
         /// </summary>
         [JsonProperty(PropertyName = Protocol.FRAME_LEFT_EYE)]
-        public GazeEye LeftEye { get; set; }
+        public Eye LeftEye { get; set; }
 
         /// <summary>
         /// Right GazeEye object
         /// </summary>
         [JsonProperty(PropertyName = Protocol.FRAME_RIGHT_EYE)]
-        public GazeEye RightEye { get; set; }
+        public Eye RightEye { get; set; }
 
         /// <summary>
         /// Timestamp for this frame
@@ -76,6 +78,10 @@ namespace TETCSharpClient.Data
         [JsonProperty(PropertyName = Protocol.FRAME_FIXATION)]
         public bool IsFixated { get; set; }
 
+        #endregion
+
+        #region Constructor
+
         public GazeData()
         {
             TimeStamp = (long) Math.Round(DateTime.Now.TimeOfDay.TotalMilliseconds);
@@ -83,8 +89,8 @@ namespace TETCSharpClient.Data
             RawCoordinates = new Point2D();
             SmoothedCoordinates = new Point2D();
 
-            LeftEye = new GazeEye();
-            RightEye = new GazeEye();
+            LeftEye = new Eye();
+            RightEye = new Eye();
         }
 
         public GazeData(GazeData other)
@@ -109,23 +115,13 @@ namespace TETCSharpClient.Data
             Set(JsonConvert.DeserializeObject<GazeData>(json));
         }
 
+        #endregion
+
+        #region Public methods
+
         public GazeData Clone()
         {
             return new GazeData(this);
-        }
-
-        private void Set(GazeData other)
-        {
-            State = other.State;
-            TimeStamp = other.TimeStamp;
-
-            RawCoordinates = other.RawCoordinates;
-            SmoothedCoordinates = other.SmoothedCoordinates;
-
-            LeftEye = other.LeftEye;
-            RightEye = other.RightEye;
-
-            IsFixated = other.IsFixated;
         }
 
         public override bool Equals(Object o)
@@ -146,9 +142,29 @@ namespace TETCSharpClient.Data
             return false;
         }
 
-        public String toJson()
+        public String ToJson()
         {
             return JsonConvert.SerializeObject(this);
         }
+
+        #endregion
+
+        #region Private methods
+
+        private void Set(GazeData other)
+        {
+            State = other.State;
+            TimeStamp = other.TimeStamp;
+
+            RawCoordinates = other.RawCoordinates;
+            SmoothedCoordinates = other.SmoothedCoordinates;
+
+            LeftEye = other.LeftEye;
+            RightEye = other.RightEye;
+
+            IsFixated = other.IsFixated;
+        }
+
+        #endregion
     }
 }

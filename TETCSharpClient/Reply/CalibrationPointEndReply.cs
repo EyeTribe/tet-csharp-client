@@ -13,5 +13,4 @@ namespace TETCSharpClient.Reply
         [JsonProperty(PropertyName = Protocol.KEY_VALUES)]
         public CalibrationPointEndRequestValues Values { set; get; }
     }
-
 }

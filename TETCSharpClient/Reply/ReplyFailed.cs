@@ -12,5 +12,4 @@ namespace TETCSharpClient.Reply
         [JsonProperty(PropertyName = Protocol.KEY_VALUES)]
         public ReplyFailedValues Values { set; get; }
     }
-
 }

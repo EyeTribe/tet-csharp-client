@@ -4,6 +4,7 @@
     {
         public const int STATUSCODE_CALIBRATION_UPDATE = 800;
         public const int STATUSCODE_SCREEN_UPDATE = 801;
+        public const int STATUSCODE_TRACKER_UPDATE = 802;
 
         public const string KEY_CATEGORY = "category";
         public const string KEY_REQUEST = "request";
@@ -22,6 +23,9 @@
         public const string TRACKER_VERSION = "version";
         public const string TRACKER_ISCALIBRATED = "iscalibrated";
         public const string TRACKER_ISCALIBRATING = "iscalibrating";
+        public const string TRACKER_TRACKERSTATE = "trackerstate";
+        public const string TRACKER_CALIBRATIONRESULT = "calibresult";
+        public const string TRACKER_FRAMERATE = "framerate";
         public const string TRACKER_FRAME = "frame";
         public const string TRACKER_SCREEN_INDEX = "screenindex";
         public const string TRACKER_SCREEN_RESOLUTION_WIDTH = "screenresw";
@@ -52,27 +56,27 @@
         public const string FRAME_PUPIL_SIZE = "psize";
         public const string FRAME_PUPIL_CENTER = "pcenter";
 
-        public const string CALIBRESULT_KEY_RESULT = "result";
-        public const string CALIBRESULT_KEY_AVERAGE_ERROR_DEGREES = "deg";
-        public const string CALIBRESULT_KEY_AVERAGE_ERROR_LEFT_DEGREES = "degl";
-        public const string CALIBRESULT_KEY_AVERAGE_ERROR_RIGHT_DEGREES = "degr";
-        public const string CALIBRESULT_KEY_CALIBRATION_POINTS = "calibpoints";
-        public const string CALIBRESULT_KEY_STATE = "state";
-        public const string CALIBRESULT_KEY_COORDINATES = "cp";
-        public const string CALIBRESULT_KEY_X = "x";
-        public const string CALIBRESULT_KEY_Y = "y";
-        public const string CALIBRESULT_KEY_MEAN_ESTIMATED_COORDINATES = "mecp";
-        public const string CALIBRESULT_KEY_ACCURACIES_DEGREES = "acd";
-        public const string CALIBRESULT_KEY_ACCURACY_AVERAGE_DEGREES = "ad";
-        public const string CALIBRESULT_KEY_ACCURACY_LEFT_DEGREES = "adl";
-        public const string CALIBRESULT_KEY_ACCURACY_RIGHT_DEGREES = "adr";
-        public const string CALIBRESULT_KEY_MEAN_ERRORS_PIXELS = "mepix";
-        public const string CALIBRESULT_KEY_MEAN_ERROR_AVERAGE_PIXELS = "mep";
-        public const string CALIBRESULT_KEY_MEAN_ERROR_LEFT_PIXELS = "mepl";
-        public const string CALIBRESULT_KEY_MEAN_ERROR_RIGHT_PIXELS = "mepr";
-        public const string CALIBRESULT_KEY_STANDARD_DEVIATIONS_PIXELS = "asdp";
-        public const string CALIBRESULT_KEY_STANDARD_DEVIATION_AVERAGE_PIXELS = "asd";
-        public const string CALIBRESULT_KEY_STANDARD_DEVIATION_LEFT_PIXELS = "asdl";
-        public const string CALIBRESULT_KEY_STANDARD_DEVIATION_RIGHT_PIXELS = "asdr";
+        public const string CALIBRESULT_RESULT = "result";
+        public const string CALIBRESULT_AVERAGE_ERROR_DEGREES = "deg";
+        public const string CALIBRESULT_AVERAGE_ERROR_LEFT_DEGREES = "degl";
+        public const string CALIBRESULT_AVERAGE_ERROR_RIGHT_DEGREES = "degr";
+        public const string CALIBRESULT_CALIBRATION_POINTS = "calibpoints";
+        public const string CALIBRESULT_STATE = "state";
+        public const string CALIBRESULT_COORDINATES = "cp";
+        public const string CALIBRESULT_X = "x";
+        public const string CALIBRESULT_Y = "y";
+        public const string CALIBRESULT_MEAN_ESTIMATED_COORDINATES = "mecp";
+        public const string CALIBRESULT_ACCURACIES_DEGREES = "acd";
+        public const string CALIBRESULT_ACCURACY_AVERAGE_DEGREES = "ad";
+        public const string CALIBRESULT_ACCURACY_LEFT_DEGREES = "adl";
+        public const string CALIBRESULT_ACCURACY_RIGHT_DEGREES = "adr";
+        public const string CALIBRESULT_MEAN_ERRORS_PIXELS = "mepix";
+        public const string CALIBRESULT_MEAN_ERROR_AVERAGE_PIXELS = "mep";
+        public const string CALIBRESULT_MEAN_ERROR_LEFT_PIXELS = "mepl";
+        public const string CALIBRESULT_MEAN_ERROR_RIGHT_PIXELS = "mepr";
+        public const string CALIBRESULT_STANDARD_DEVIATION_PIXELS = "asdp";
+        public const string CALIBRESULT_STANDARD_DEVIATION_AVERAGE_PIXELS = "asd";
+        public const string CALIBRESULT_STANDARD_DEVIATION_LEFT_PIXELS = "asdl";
+        public const string CALIBRESULT_STANDARD_DEVIATION_RIGHT_PIXELS = "asdr";
     }
 }

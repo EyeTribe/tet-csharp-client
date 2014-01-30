@@ -11,7 +11,6 @@
     <AssemblyName>TETCSharpClient</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,18 +37,19 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GazeApiSettings.cs" />
+    <Compile Include="Data\Point3D.cs" />
+    <Compile Include="Data\Accuracy.cs" />
+    <Compile Include="Data\Eye.cs" />
+    <Compile Include="Data\MeanError.cs" />
+    <Compile Include="Data\Point2D.cs" />
+    <Compile Include="Data\StandardDeviation.cs" />
     <Compile Include="GazeBroadcaster.cs" />
-    <Compile Include="Data\GazeAccuracy.cs" />
     <Compile Include="Data\CalibrationPoint.cs" />
     <Compile Include="Data\CalibrationResult.cs" />
     <Compile Include="Data\GazeData.cs" />
-    <Compile Include="Data\GazeEye.cs" />
-    <Compile Include="Data\GazeMeanError.cs" />
-    <Compile Include="Data\Point2D.cs" />
-    <Compile Include="Data\GazeStandardDeviation.cs" />
     <Compile Include="GazeApiManager.cs" />
     <Compile Include="GazeManager.cs" />
+    <Compile Include="GazeUtils.cs" />
     <Compile Include="Heartbeat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol.cs" />

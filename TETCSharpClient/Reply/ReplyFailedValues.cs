@@ -7,5 +7,4 @@ namespace TETCSharpClient.Reply
         [JsonProperty(PropertyName = Protocol.KEY_STATUSMESSAGE)]
         public string StatusMessage { set; get; }
     }
-
 }
