@@ -54,7 +54,7 @@ namespace TETCSharpClient.Data
             AverageErrorDegree = other.AverageErrorDegree;
             AverageErrorDegreeLeft = other.AverageErrorDegreeLeft;
             AverageErrorDegreeRight = other.AverageErrorDegreeRight;
-            Calibpoints = (CalibrationPoint[]) other.Calibpoints.Clone();
+            Calibpoints = (CalibrationPoint[])other.Calibpoints.Clone();
         }
 
         public CalibrationResult(String json)

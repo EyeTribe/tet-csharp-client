@@ -7,10 +7,10 @@ namespace TETCSharpClient.Reply
     {
         public CalibrationPointEndReply()
         {
-            Values = new CalibrationPointEndRequestValues();
+            Values = new CalibrationPointEndReplyValues();
         }
 
         [JsonProperty(PropertyName = Protocol.KEY_VALUES)]
-        public CalibrationPointEndRequestValues Values { set; get; }
+        public CalibrationPointEndReplyValues Values { set; get; }
     }
 }

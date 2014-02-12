@@ -53,6 +53,7 @@
     <Compile Include="Heartbeat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol.cs" />
+    <Compile Include="Reply\CalibrationPointEndReplyValues.cs" />
     <Compile Include="Reply\ReplyBase.cs" />
     <Compile Include="Reply\ReplyFailed.cs" />
     <Compile Include="Reply\ReplyFailedValues.cs" />
@@ -63,7 +64,6 @@
     <Compile Include="Request\CalibrationPointStartRequestValues.cs" />
     <Compile Include="Request\CalibrationStartRequest.cs" />
     <Compile Include="Request\CalibrationStartRequestValues.cs" />
-    <Compile Include="Request\CalibrationPointEndRequestValues.cs" />
     <Compile Include="Request\RequestBase.cs" />
     <Compile Include="Request\TrackerGetRequest.cs" />
     <Compile Include="Request\TrackerSetRequest.cs" />

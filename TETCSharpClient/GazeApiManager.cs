@@ -69,46 +69,46 @@ namespace TETCSharpClient
             }
             return true;
         }
-	
-	    public void Close()
-	    {
-		    try 
-		    {
-			    if(null != incomingStreamHandler)
-				    incomingStreamHandler.Stop();
-			
-			    if(null != outgoingStreamHandler)
+
+        public void Close()
+        {
+            try
+            {
+                if (null != incomingStreamHandler)
+                    incomingStreamHandler.Stop();
+
+                if (null != outgoingStreamHandler)
                     outgoingStreamHandler.Stop();
-			
-			    if(null != socket)
-				    socket.Close();
+
+                if (null != socket)
+                    socket.Close();
 
                 if (null != requestQueue)
                     requestQueue.Clear();
-		    }
-		    catch (Exception e) 
-		    {
+            }
+            catch (Exception e)
+            {
                 Debug.WriteLine("Error closing socket: " + e.Message);
-		    }
-	    }
-	
-	    public bool IsConnected()
-	    {
-		    if(null != socket)
-			    return socket.Connected;
-				
-		    return false;
-	    }
+            }
+        }
 
-	    protected void Request(string request)
-	    {
+        public bool IsConnected()
+        {
+            if (null != socket)
+                return socket.Connected;
+
+            return false;
+        }
+
+        protected void Request(string request)
+        {
             lock (((ICollection)requestQueue).SyncRoot)
             {
                 requestQueue.Enqueue(request);
                 //Signal Event that queue is populated
                 outEvent.GetUpdateHandle().Set();
             }
-	    }
+        }
 
         public void RequestTracker(GazeManager.ClientMode mode, GazeManager.ApiVersion version)
         {
@@ -283,7 +283,7 @@ namespace TETCSharpClient
         {
             try
             {
-                StreamReader reader  = new StreamReader(socket.GetStream());
+                StreamReader reader = new StreamReader(socket.GetStream());
 
                 while (isRunning)
                 {
@@ -300,7 +300,7 @@ namespace TETCSharpClient
             finally
             {
                 Debug.WriteLine("IncommingStreamHandler closing down");
-            }           
+            }
         }
     }
 
@@ -351,7 +351,7 @@ namespace TETCSharpClient
                     events.GetUpdateHandle().WaitOne();
 
                     //handle all pending request before going to sleep
-                    while(queue.Count > 0)
+                    while (queue.Count > 0)
                     {
                         lock (((ICollection)queue).SyncRoot)
                         {
@@ -377,7 +377,7 @@ namespace TETCSharpClient
     //<summary>
     // Callback interface responsible for handling messaages returned from the GazeApiManager 
     // </summary>
-    public interface IGazeApiReponseListener 
+    public interface IGazeApiReponseListener
     {
         void OnGazeApiResponse(String response);
     }

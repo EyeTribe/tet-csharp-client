@@ -62,10 +62,10 @@ namespace TETCSharpClient
         /// <summary>
         /// The EyeTribe API compliance levels
         /// </summary>
-        public enum ApiVersion 
-	    {
-		    VERSION_1_0 = 1
-	    }
+        public enum ApiVersion
+        {
+            VERSION_1_0 = 1
+        }
 
         #endregion
 
@@ -211,7 +211,7 @@ namespace TETCSharpClient
                             JObject values = json[Protocol.KEY_VALUES].ToObject<JObject>();
                             JToken value;
 
-                            if(null != values)
+                            if (null != values)
                             {
                                 if (values.TryGetValue(Protocol.TRACKER_VERSION, out value))
                                     version = value.ToObject<ApiVersion>();
@@ -342,11 +342,10 @@ namespace TETCSharpClient
                                 }
                             }
                         }
-                        else
-                            if (reply.Request.Equals(Protocol.TRACKER_REQUEST_SET))
-                            {
-                                //Do nothing
-                            }
+                        else if (reply.Request.Equals(Protocol.TRACKER_REQUEST_SET))
+                        {
+                            //Do nothing
+                        }
                         break;
 
                     case Protocol.CATEGORY_CALIBRATION:

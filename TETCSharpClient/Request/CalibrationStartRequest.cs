@@ -13,7 +13,7 @@ namespace TETCSharpClient.Request
         public CalibrationStartRequest(int numPoints)
             : base(Protocol.CATEGORY_CALIBRATION, Protocol.CALIBRATION_REQUEST_START)
         {
-            Values = new CalibrationStartRequestValues(numPoints); 
+            Values = new CalibrationStartRequestValues(numPoints);
         }
 
         [JsonProperty(PropertyName = Protocol.KEY_VALUES)]

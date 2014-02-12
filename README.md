@@ -45,6 +45,11 @@ The complete API specification used by the C# SDK to communicate with the server
 Changelog
 ----
 
+0.9.27 (2014-02-12)
+- Fixed tab/space formatting
+- New methods to GazeUtils
+- Minor internal refactoring
+
 0.9.26 (2014-01-30)
 - Redesign and refactoring of main SDK interface GazeManager to support new TET API features
 - Added support for listening for EyeTribe Tracker states (ITrackerStateListener & TrackerState)

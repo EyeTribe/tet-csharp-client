@@ -84,7 +84,7 @@ namespace TETCSharpClient.Data
 
         public GazeData()
         {
-            TimeStamp = (long) Math.Round(DateTime.Now.TimeOfDay.TotalMilliseconds);
+            TimeStamp = (long)Math.Round(DateTime.Now.TimeOfDay.TotalMilliseconds);
             IsFixated = false;
             RawCoordinates = new Point2D();
             SmoothedCoordinates = new Point2D();

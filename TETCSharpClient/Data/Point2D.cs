@@ -58,17 +58,17 @@ namespace TETCSharpClient.Data
 
         public static Point2D operator +(Point2D point1, Point2D point2)
         {
-            return new Point2D {x = point1.x + point2.x, y = point1.y + point2.y};
+            return new Point2D { x = point1.x + point2.x, y = point1.y + point2.y };
         }
 
         public static Point2D operator -(Point2D point1, Point2D point2)
         {
-            return new Point2D {x = point1.x - point2.x, y = point1.y - point2.y};
+            return new Point2D { x = point1.x - point2.x, y = point1.y - point2.y };
         }
 
         public static Point2D operator *(Point2D point1, Point2D multi)
         {
-            return new Point2D {x = point1.x*multi.x, y = point1.y*multi.y};
+            return new Point2D { x = point1.x * multi.x, y = point1.y * multi.y };
         }
 
         public Point2D Add(Point2D p2)
@@ -83,27 +83,27 @@ namespace TETCSharpClient.Data
 
         public Point2D Multiply(int k)
         {
-            return new Point2D(x*k, y*k);
+            return new Point2D(x * k, y * k);
         }
 
         public Point2D Divide(int k)
         {
-            return new Point2D(x/k, y/k);
+            return new Point2D(x / k, y / k);
         }
 
         public Point2D Multiply(double k)
         {
-            return new Point2D(x*k, y*k);
+            return new Point2D(x * k, y * k);
         }
 
         public Point2D Divide(double k)
         {
-            return new Point2D(x/k, y/k);
+            return new Point2D(x / k, y / k);
         }
 
         public double Average()
         {
-            return (x + y)/2;
+            return (x + y) / 2;
         }
     }
 }
