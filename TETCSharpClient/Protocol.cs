@@ -45,6 +45,7 @@
         public const string CALIBRATION_Y = "y";
 
         public const string FRAME_TIME = "time";
+        public const string FRAME_TIMESTAMP = "timeStamp";
         public const string FRAME_FIXATION = "fix";
         public const string FRAME_STATE = "state";
         public const string FRAME_RAW_COORDINATES = "raw";

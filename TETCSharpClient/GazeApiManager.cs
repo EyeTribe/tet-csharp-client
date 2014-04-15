@@ -6,6 +6,7 @@ using System.Threading;
 using System.Collections;
 using TETCSharpClient.Request;
 using System.IO;
+using System.Text;
 using System.Diagnostics;
 
 namespace TETCSharpClient
@@ -31,14 +32,21 @@ namespace TETCSharpClient
         private WaitHandleWrap outEvent;
         private Queue<String> requestQueue;
         private IGazeApiReponseListener responseListener;
+        private IGazeApiConnectionListener connectionListener;
+
+        private readonly Object initializationLock = new Object();
 
         #endregion
 
         #region Constructor
 
-        public GazeApiManager(IGazeApiReponseListener respListener)
+        public GazeApiManager(IGazeApiReponseListener responseListener)
+            : this(responseListener, null) { }
+
+        public GazeApiManager(IGazeApiReponseListener responseListener, IGazeApiConnectionListener connectionListener)
         {
-            responseListener = respListener;
+            this.responseListener = responseListener;
+            this.connectionListener = connectionListener;
             requestQueue = new Queue<String>();
         }
 
@@ -48,47 +56,80 @@ namespace TETCSharpClient
 
         public bool Connect(string host, int port)
         {
-            Close();
-
-            try
+            lock (initializationLock)
             {
-                outEvent = new WaitHandleWrap();
-                socket = new TcpClient(host, port);
-
-                incomingStreamHandler = new IncomingStreamHandler(socket, responseListener);
-                incomingStreamHandler.Start();
-
-                outgoingStreamHandler = new OutgoingStreamHandler(socket, requestQueue, outEvent);
-                outgoingStreamHandler.Start();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Error opening socket. Is Tracker Server running? " + e.Message);
                 Close();
-                return false;
+
+                try
+                {
+                    outEvent = new WaitHandleWrap();
+                    socket = new TcpClient(host, port);
+
+                    //notify connection change
+                    if (null != connectionListener)
+                        connectionListener.OnGazeApiConnectionStateChanged(socket.Connected);
+
+                    incomingStreamHandler = new IncomingStreamHandler(socket, responseListener, connectionListener, this);
+                    incomingStreamHandler.Start();
+
+                    outgoingStreamHandler = new OutgoingStreamHandler(socket, requestQueue, outEvent, connectionListener, this);
+                    outgoingStreamHandler.Start();
+                }
+                catch (SocketException se)
+                {
+                    Debug.WriteLine("Unable to open socket. Is Tracker Server running? Exception: " + se.Message);
+
+                    //notify connection change
+                    if (null != connectionListener)
+                        connectionListener.OnGazeApiConnectionStateChanged(false);
+
+                    Close();
+                    return false;
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Exception while establishing socket connection. Is Tracker Server running? Exception: " + e.Message);
+                    Close();
+                    return false;
+                }
+                return true;
             }
-            return true;
         }
 
         public void Close()
         {
-            try
+            lock (initializationLock)
             {
-                if (null != incomingStreamHandler)
-                    incomingStreamHandler.Stop();
+                try
+                {
+                    if (null != requestQueue)
+                        lock (((ICollection)requestQueue).SyncRoot)
+                        {
+                            requestQueue.Clear();
+                        }
 
-                if (null != outgoingStreamHandler)
-                    outgoingStreamHandler.Stop();
+                    if (null != incomingStreamHandler)
+                    {
+                        incomingStreamHandler.Stop();
+                        incomingStreamHandler = null;
+                    }
 
-                if (null != socket)
-                    socket.Close();
+                    if (null != outgoingStreamHandler)
+                    {
+                        outgoingStreamHandler.Stop();
+                        outgoingStreamHandler = null;
+                    }
 
-                if (null != requestQueue)
-                    requestQueue.Clear();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Error closing socket: " + e.Message);
+                    if (null != socket)
+                    {
+                        socket.Close();
+                        socket = null;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Error closing socket: " + e.Message);
+                }
             }
         }
 
@@ -102,19 +143,20 @@ namespace TETCSharpClient
 
         protected void Request(string request)
         {
-            lock (((ICollection)requestQueue).SyncRoot)
-            {
-                requestQueue.Enqueue(request);
-                //Signal Event that queue is populated
-                outEvent.GetUpdateHandle().Set();
-            }
+            if (IsConnected())
+                lock (((ICollection)requestQueue).SyncRoot)
+                {
+                    requestQueue.Enqueue(request);
+                    //Signal Event that queue is populated
+                    outEvent.GetUpdateHandle().Set();
+                }
         }
 
         public void RequestTracker(GazeManager.ClientMode mode, GazeManager.ApiVersion version)
         {
             TrackerSetRequest gr = new TrackerSetRequest();
 
-            gr.Values.Version = (int)version.GetTypeCode();
+            gr.Values.Version = (int)Convert.ChangeType(version, version.GetTypeCode());
             gr.Values.Push = mode == GazeManager.ClientMode.Push;
 
             Request(JsonConvert.SerializeObject(gr));
@@ -252,12 +294,17 @@ namespace TETCSharpClient
         private bool isRunning;
         private Thread workerThread;
         private TcpClient socket;
+        private StreamReader reader;
         private IGazeApiReponseListener responseListener;
+        private IGazeApiConnectionListener connectionListener;
+        private GazeApiManager networkLayer;
 
-        public IncomingStreamHandler(TcpClient _socket, IGazeApiReponseListener respListener)
+        public IncomingStreamHandler(TcpClient _socket, IGazeApiReponseListener _responseListener, IGazeApiConnectionListener _connectionListener, GazeApiManager _networkLayer)
         {
-            socket = _socket;
-            responseListener = respListener;
+            this.socket = _socket;
+            this.responseListener = _responseListener;
+            this.connectionListener = _connectionListener;
+            this.networkLayer = _networkLayer;
         }
 
         public void Start()
@@ -275,27 +322,59 @@ namespace TETCSharpClient
         {
             lock (this)
             {
+                if (null != reader)
+                    reader.Close();
+
                 isRunning = false;
             }
+        }
+
+        private bool IsSocketConnected()
+        {
+            return !((null != socket && socket.Client.Poll(1000, SelectMode.SelectRead) && (socket.Client.Available == 0)) || !socket.Client.Connected);
         }
 
         private void Work()
         {
             try
             {
-                StreamReader reader = new StreamReader(socket.GetStream());
+                reader = new StreamReader(socket.GetStream(), Encoding.ASCII);
 
                 while (isRunning)
                 {
-                    string response = reader.ReadLine();
+                    try
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            string response = reader.ReadLine();
 
-                    if (null != responseListener)
-                        responseListener.OnGazeApiResponse(response);
+                            if (null != responseListener && !string.IsNullOrEmpty(response))
+                                responseListener.OnGazeApiResponse(response);
+                        }
+                    }
+                    catch (IOException ioe)
+                    {
+                        //Are we closing down or has reading from socket failed?
+                        if (isRunning && !IsSocketConnected())
+                        {
+                            //notify connection listener if any
+                            if (null != connectionListener)
+                                connectionListener.OnGazeApiConnectionStateChanged(false);
+
+                            //server must be disconnected, shut down network layer
+                            networkLayer.Close();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine("Exception while reading from socket: " + e.Message);
+                    }
+
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Exception while running IncomingStreamHandler: " + e.Message + "\n" + e.StackTrace);
+                Debug.WriteLine("Exception while establishing incoming socket connection: " + e.Message);
             }
             finally
             {
@@ -306,16 +385,24 @@ namespace TETCSharpClient
 
     internal class OutgoingStreamHandler
     {
+        private readonly int NUM_WRITE_ATTEMPTS_BEFORE_FAIL = 3;
+        private int numWriteAttempt;
+
         private Thread workerThread;
         private TcpClient socket;
+        private StreamWriter writer;
         private Queue<String> queue;
         private WaitHandleWrap events;
+        private IGazeApiConnectionListener connectionListener;
+        private GazeApiManager networkLayer;
 
-        public OutgoingStreamHandler(TcpClient socket, Queue<String> queue, WaitHandleWrap events)
+        public OutgoingStreamHandler(TcpClient _socket, Queue<String> _queue, WaitHandleWrap _events, IGazeApiConnectionListener _connectionListener, GazeApiManager _networkLayer)
         {
-            this.socket = socket;
-            this.queue = queue;
-            this.events = events;
+            this.socket = _socket;
+            this.queue = _queue;
+            this.events = _events;
+            this.connectionListener = _connectionListener;
+            this.networkLayer = _networkLayer;
         }
 
         public void Start()
@@ -332,9 +419,11 @@ namespace TETCSharpClient
         {
             lock (this)
             {
-                events.GetKillHandle().Close();
+                if (null != writer)
+                    writer.Close();
+
+                events.GetKillHandle().Set();
                 events.GetUpdateHandle().Set();
-                events.GetUpdateHandle().Close();
             }
         }
 
@@ -343,29 +432,59 @@ namespace TETCSharpClient
             try
             {
                 string request = string.Empty;
-                StreamWriter writer = new StreamWriter(socket.GetStream());
+                writer = new StreamWriter(socket.GetStream(), Encoding.ASCII);
 
                 //while waiting for queue to populate and thread not killed
                 while (!events.GetKillHandle().WaitOne(0, false))
                 {
-                    events.GetUpdateHandle().WaitOne();
-
-                    //handle all pending request before going to sleep
-                    while (queue.Count > 0)
+                    try
                     {
-                        lock (((ICollection)queue).SyncRoot)
-                        {
-                            request = queue.Dequeue();
-                        }
+                        events.GetUpdateHandle().WaitOne();
 
-                        writer.WriteLine(request);
-                        writer.Flush();
+                        //handle all pending request before going to sleep
+                        while (queue.Count > 0)
+                        {
+                            lock (((ICollection)queue).SyncRoot)
+                            {
+                                request = queue.Dequeue();
+                            }
+
+                            writer.WriteLine(request);
+                            writer.Flush();
+
+                            if (numWriteAttempt > 0)
+                                numWriteAttempt = 0;
+                        }
+                    }
+                    catch (IOException ioe)
+                    {
+                        //Has writing to socket failed and may server be disconnected?
+                        if (numWriteAttempt++ >= NUM_WRITE_ATTEMPTS_BEFORE_FAIL)
+                        {
+                            //notify connection listener if any
+                            if (null != connectionListener)
+                                connectionListener.OnGazeApiConnectionStateChanged(false);
+
+                            //server must be disconnected, shut down network layer
+                            networkLayer.Close();
+                        }
+                        else
+                        {
+                            //else retry request asap
+                            queue.Enqueue(request);
+                            //Signal Event that queue is populated
+                            events.GetUpdateHandle().Set();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine("Exception while writing to socket: " + e.Message);
                     }
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Exception while running OutgoingStreamHandler: " + e.Message + "\n" + e.StackTrace);
+                Debug.WriteLine("Exception while establishing outgoing socket connection: " + e.Message);
             }
             finally
             {
@@ -377,8 +496,16 @@ namespace TETCSharpClient
     //<summary>
     // Callback interface responsible for handling messaages returned from the GazeApiManager 
     // </summary>
-    public interface IGazeApiReponseListener
+    internal interface IGazeApiReponseListener
     {
         void OnGazeApiResponse(String response);
+    }
+
+    //<summary>
+    // Callback interface responsible for handling connection state notifications from the GazeApiManager
+    // </summary>
+    internal interface IGazeApiConnectionListener
+    {
+        void OnGazeApiConnectionStateChanged(bool isConnected);
     }
 }

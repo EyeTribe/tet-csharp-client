@@ -52,11 +52,11 @@ namespace TETCSharpClient
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Exception while running GazeHeartbeat: e" + e.Message);
+                Debug.WriteLine("Exception while running Heartbeat: e" + e.Message);
             }
             finally
             {
-                Debug.WriteLine("GazeHeartbeat closing down");
+                Debug.WriteLine("Heartbeat closing down");
             }
         }
     }

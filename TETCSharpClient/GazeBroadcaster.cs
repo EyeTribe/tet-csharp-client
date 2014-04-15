@@ -39,9 +39,8 @@ namespace TETCSharpClient
         {
             lock (this)
             {
-                events.GetKillHandle().Close();
+                events.GetKillHandle().Set();
                 events.GetUpdateHandle().Set();
-                events.GetUpdateHandle().Close();
             }
         }
 
@@ -70,14 +69,7 @@ namespace TETCSharpClient
                         {
                             foreach (IGazeListener listener in gazeListeners)
                             {
-                                try
-                                {
-                                    listener.OnGazeUpdate(gaze);
-                                }
-                                catch (Exception e)
-                                {
-                                    Debug.WriteLine("Exception while calling IGazeListener.OnGazeUpdate() on listener " + listener + ": " + e.Message);
-                                }
+                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnGazeUpdate), new Object[] { listener, gaze });
                             }
                         }
                     }
@@ -90,6 +82,25 @@ namespace TETCSharpClient
             finally
             {
                 Debug.WriteLine("Broadcaster closing down");
+            }
+        }
+
+        /// <summary>
+        /// Internal delegate helper method. Used fro ThreadPooling.
+        /// </summary>
+        internal static void HandleOnGazeUpdate(Object stateInfo)
+        {
+            IGazeListener listener = null;
+            try
+            {
+                Object[] objs = (Object[])stateInfo;
+                listener = (IGazeListener)objs[0];
+                GazeData gaze = (GazeData)objs[1];
+                listener.OnGazeUpdate(gaze);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Exception while calling IGazeListener.OnGazeUpdate() on listener " + listener + ": " + e.Message);
             }
         }
     }

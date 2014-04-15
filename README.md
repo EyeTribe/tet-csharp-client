@@ -33,7 +33,7 @@ Open source samples for windows are available through [GitHub](https://github.co
 Tutorials
 ----
 
-A simple guide to using this C# SDK is found in the [tutorials section](http://dev.theeyetribe.com/tutorial/) of our developer website. More tutorials will be provided in the near future.
+A simple guide to using this C# SDK is found in the [tutorials section](http://dev.theeyetribe.com/csharp/) of our developer website. More tutorials will be provided in the near future.
 
 
 API Reference
@@ -44,6 +44,14 @@ The complete API specification used by the C# SDK to communicate with the server
 
 Changelog
 ----
+
+0.9.33 (2014-04-15)
+- Thread safe GazeManager activation/deactivation
+- Added support for listening to EyeTribe Server conneciton state (IConnectionStateListener)
+- Minor API timestamp change
+- Updated Json.NET to 6.0.2
+- Minor refactoring
+- Generel bug fixing and optimization
 
 0.9.27 (2014-02-12)
 - Fixed tab/space formatting
@@ -58,7 +66,6 @@ Changelog
 - Added option to fetch cached CalibrationResult
 - Added GazeUtils class that holds methods common to eye tracking apps
 - Added documentation
-
 
 0.9.21 (2013-01-08)
 - Initial release

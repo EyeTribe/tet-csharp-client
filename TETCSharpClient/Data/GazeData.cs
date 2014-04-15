@@ -5,7 +5,7 @@ namespace TETCSharpClient.Data
 {
     /// <summary>
     /// Contains eye tracking results of a single frame. It holds a state that defines
-    /// the quality of the current tracking and fine grained traking details down to eye level.
+    /// the quality of the current tracking and fine grained tracking details down to eye level.
     /// </summary>
     public class GazeData
     {
@@ -32,7 +32,7 @@ namespace TETCSharpClient.Data
         public const int STATE_TRACKING_FAIL = 1 << 3;
 
         /// <summary>
-        /// Set when tracking has failed consecutively over a period of time defined by enige.
+        /// Set when tracking has failed consecutively over a period of time defined by engine.
         /// </summary>
         public const int STATE_TRACKING_LOST = 1 << 4;
 
@@ -71,6 +71,12 @@ namespace TETCSharpClient.Data
         /// </summary>
         [JsonProperty(PropertyName = Protocol.FRAME_TIME)]
         public long TimeStamp { get; set; }
+
+        /// <summary>
+        /// Timestamp for this frame represented in String form
+        /// </summary>
+        [JsonProperty(PropertyName = Protocol.FRAME_TIMESTAMP)]
+        public String TimeStampString { get; set; }
 
         /// <summary>
         /// Is user fixated in this frame?
