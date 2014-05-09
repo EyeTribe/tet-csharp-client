@@ -24,7 +24,7 @@ To build, open solution file in compliant [Visual Studio](http://www.visualstudi
 
 Documentation
 ----
-Find documentation of this library at [TET C# Doc](http://theeyetribe.github.io/tet-csharp-client).
+Find documentation of this library at [TET C# Doc](http://eyetribe.github.io/tet-csharp-client).
 
 Samples
 ----
