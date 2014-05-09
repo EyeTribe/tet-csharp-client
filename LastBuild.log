@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shfbBuild product="Sandcastle Help File Builder" version="2014.4.22.0" projectFile="M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\DocBuilder.shfbproj" started="09-05-2014 11:59:22">
+<buildStep step="Initializing">
+Finding tools...
+The Sandcastle tools are located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\&#39;
+Locating components in the following folder(s):
+   M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder
+Using presentation style &#39;VS2013&#39; located in &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013&#39;
+</buildStep>
+<buildStep step="ValidatingDocumentationSources">
+Validating and copying documentation source information
+Source: M:\MPET\CSharp\SDK\TETCSharpClient\TETCSharpClient\bin\Release\TETCSharpClient.dll
+    Found assembly &#39;M:\MPET\CSharp\SDK\TETCSharpClient\TETCSharpClient\bin\Release\TETCSharpClient.dll&#39;
+Source: M:\MPET\CSharp\SDK\TETCSharpClient\TETCSharpClient\bin\Release\TETCSharpClient.xml
+
+References to include (excluding framework assemblies):
+    SandcastleBuilder.Utils, Version=2014.1.26.0, Culture=neutral, PublicKeyToken=c8895f0c125eff20
+
+Copying XML comments files
+    M:\MPET\CSharp\SDK\TETCSharpClient\TETCSharpClient\bin\Release\TETCSharpClient.XML -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\TETCSharpClient.XML
+</buildStep>
+<buildStep step="GenerateSharedContent">
+Generating shared content files (en-US, English (United States))...
+    Last step completed in 00:00:00.0264
+</buildStep>
+<buildStep step="GenerateApiFilter">
+Generating API filter for MRefBuilder...
+    Last step completed in 00:00:00.0029
+</buildStep>
+<buildStep step="GenerateReflectionInfo">
+Generating reflection information...
+[C:\Program Files (x86)\MSBuild\12.0\bin\MSBuild.exe]
+Build started 09-05-2014 11:59:23.
+Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\GenerateRefInfo.proj&quot; on node 1 (default targets).
+PrepareForBuild:
+  Creating directory &quot;obj\Debug\&quot;.
+GenerateRefInfo:
+  MRefBuilder (v2014.1.26.0)
+  Copyright &#184; 2006-2014, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved.
+  Loaded 1 assemblies for reflection and 2 dependency assemblies.
+  Wrote information on 2 namespaces, 20 types, and 168 members
+  Copying file from &quot;reflection.org&quot; to &quot;reflection.all&quot;.
+  XslTransform (v2014.1.26.0)
+  Copyright &#184; 2006-2014, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\MergeDuplicates.xsl&#39;.
+Done Building Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\GenerateRefInfo.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.39
+    Last step completed in 00:00:00.4668
+</buildStep>
+<buildStep step="TransformReflectionInfo">
+Transforming reflection output...
+[C:\Program Files (x86)\MSBuild\12.0\bin\MSBuild.exe]
+Build started 09-05-2014 11:59:23.
+Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\TransformManifest.proj&quot; on node 1 (default targets).
+TransformManifest:
+  XslTransform (v2014.1.26.0)
+  Copyright &#184; 2006-2014, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\ProductionTransforms\ApplyVSDocModel.xsl&#39;.
+  Copying file from &quot;reflection.xml&quot; to &quot;reflection.nofilenames&quot;.
+  XslTransform (v2014.1.26.0)
+  Copyright &#184; 2006-2014, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\AddFilenames.xsl&#39;.
+  XslTransform (v2014.1.26.0)
+  Copyright &#184; 2006-2014, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\ProductionTransforms\ReflectionToManifest.xsl&#39;.
+Done Building Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\TransformManifest.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.33
+    Last step completed in 00:00:00.3955
+</buildStep>
+<buildStep step="GenerateNamespaceSummaries">
+Generating namespace summary information...
+    Last step completed in 00:00:00.1661
+</buildStep>
+<buildStep step="CopyConceptualContent">
+Copying conceptual content...
+Copying standard token shared content file...
+Checking for other token files...
+Checking for code snippets files...
+Copying images and creating the media map file...
+Generating conceptual topic files
+    Parsing topic file &#39;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Content\Welcome.aml&#39;
+    M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Content\Welcome.aml -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\ddueXml\827a27cd-051c-4f8b-86d0-298af842af03.xml
+    Last step completed in 00:00:00.0263
+</buildStep>
+<buildStep step="CreateConceptualTopicConfigs">
+Creating conceptual topic configuration files...
+    Companion files
+    _ContentMetadata_.xml
+    ConceptualManifest.xml
+    Last step completed in 00:00:00.0078
+</buildStep>
+<buildStep step="CopyAdditionalContent">
+Copying additional content files...
+No additional content to copy
+    Last step completed in 00:00:00.0029
+</buildStep>
+<buildStep step="MergeTablesOfContents">
+Merging conceptual and additional tables of contents...
+    Last step completed in 00:00:00.0029
+</buildStep>
+<buildStep step="GenerateIntermediateTableOfContents">
+Generating intermediate table of contents file...
+[C:\Program Files (x86)\MSBuild\12.0\bin\MSBuild.exe]
+Build started 09-05-2014 11:59:24.
+Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\GenerateIntermediateTOC.proj&quot; on node 1 (default targets).
+GenerateIntermediateTOC:
+  XslTransform (v2014.1.26.0)
+  Copyright &#184; 2006-2014, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved.
+  Applying XSL transformation &#39;C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\ProductionTransforms\CreateVSToc.xsl&#39;.
+Done Building Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\GenerateIntermediateTOC.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.09
+Generating conceptual content intermediate TOC file...
+    Last step completed in 00:00:00.1533
+</buildStep>
+<buildStep step="CreateBuildAssemblerConfigs">
+Creating Sandcastle configuration files...
+    sandcastle.config
+    conceptual.config
+    Last step completed in 00:00:00.1797
+</buildStep>
+<buildStep step="MergeCustomConfigs">
+Merging custom build component configurations
+M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\sandcastle.config
+M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\conceptual.config
+    Removing unused ExampleComponent.
+    Last step completed in 00:00:00.0909
+</buildStep>
+<buildStep step="BuildConceptualTopics">
+Building conceptual help topics...
+[C:\Program Files (x86)\MSBuild\12.0\bin\MSBuild.exe]
+Build started 09-05-2014 11:59:24.
+Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildConceptualTopics.proj&quot; on node 1 (default targets).
+BuildConceptualTopics:
+  BuildAssembler (v2014.1.26.0)
+  Copyright &#184; 2006-2014, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved.
+  Loading configuration...
+  Processing topics...
+  Processed 1 topic(s)
+  CopyFromIndexComponent: &quot;metadata&quot; in-memory cache entries used: 1 of 15.
+Done Building Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildConceptualTopics.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.55
+    Last step completed in 00:00:03.7197
+</buildStep>
+<buildStep step="BuildReferenceTopics">
+Building reference help topics...
+[C:\Program Files (x86)\MSBuild\12.0\bin\MSBuild.exe]
+Build started 09-05-2014 11:59:28.
+Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj&quot; on node 1 (default targets).
+BuildReferenceTopics:
+  BuildAssembler (v2014.1.26.0)
+  Copyright &#184; 2006-2014, Microsoft Corporation, All Rights Reserved.
+  Portions Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved.
+  Loading configuration...
+  Processing topics...
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeManager.HasCalibrationResultListener(TETCSharpClient.ICalibrationResultListener)] Missing &lt;param name=&quot;listener&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeManager.HasConnectionStateListener(TETCSharpClient.IConnectionStateListener)] Missing &lt;param name=&quot;listener&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeManager.HasGazeListener(TETCSharpClient.IGazeListener)] Missing &lt;param name=&quot;listener&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeManager.HasTrackerStateListener(TETCSharpClient.ITrackerStateListener)] Missing &lt;param name=&quot;listener&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeManager.OnGazeApiConnectionStateChanged(System.Boolean)] Missing &lt;param name=&quot;isConnected&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeManager.OnGazeApiResponse(System.String)] Missing &lt;param name=&quot;response&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getDistancePoint2D(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getDistancePoint2D(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;a&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getDistancePoint2D(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;b&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesCenterNormalized(TETCSharpClient.Data.Eye,TETCSharpClient.Data.Eye)] Missing &lt;param name=&quot;leftEye&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesCenterNormalized(TETCSharpClient.Data.Eye,TETCSharpClient.Data.Eye)] Missing &lt;param name=&quot;rightEye&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesCenterPixels(TETCSharpClient.Data.Eye,TETCSharpClient.Data.Eye,System.Int32,System.Int32)] Missing &lt;param name=&quot;leftEye&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesCenterPixels(TETCSharpClient.Data.Eye,TETCSharpClient.Data.Eye,System.Int32,System.Int32)] Missing &lt;param name=&quot;rightEye&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesCenterPixels(TETCSharpClient.Data.Eye,TETCSharpClient.Data.Eye,System.Int32,System.Int32)] Missing &lt;param name=&quot;screenWidth&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesCenterPixels(TETCSharpClient.Data.Eye,TETCSharpClient.Data.Eye,System.Int32,System.Int32)] Missing &lt;param name=&quot;screenHeight&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesCenterPixels(TETCSharpClient.Data.GazeData,System.Int32,System.Int32)] Missing &lt;param name=&quot;screenWidth&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesCenterPixels(TETCSharpClient.Data.GazeData,System.Int32,System.Int32)] Missing &lt;param name=&quot;screenHeight&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesDistanceNormalized(TETCSharpClient.Data.Eye,TETCSharpClient.Data.Eye)] Missing &lt;param name=&quot;leftEye&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getEyesDistanceNormalized(TETCSharpClient.Data.Eye,TETCSharpClient.Data.Eye)] Missing &lt;param name=&quot;rightEye&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getRelativeToScreenSpace(TETCSharpClient.Data.Point2D,System.Int32,System.Int32)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getRelativeToScreenSpace(TETCSharpClient.Data.Point2D,System.Int32,System.Int32)] Missing &lt;param name=&quot;point&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getRelativeToScreenSpace(TETCSharpClient.Data.Point2D,System.Int32,System.Int32)] Missing &lt;param name=&quot;screenWidth&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.GazeUtils.getRelativeToScreenSpace(TETCSharpClient.Data.Point2D,System.Int32,System.Int32)] Missing &lt;param name=&quot;screenHeight&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Accuracy.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Accuracy.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.CalibrationPoint.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.CalibrationPoint.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.CalibrationResult.#ctor(System.String)] Missing &lt;param name=&quot;json&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.CalibrationResult.#ctor(TETCSharpClient.Data.CalibrationResult)] Missing &lt;param name=&quot;other&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.CalibrationResult.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.CalibrationResult.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.CalibrationResult.ToJson] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Eye.#ctor(TETCSharpClient.Data.Eye)] Missing &lt;param name=&quot;other&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Eye.Clone] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Eye.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Eye.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.GazeData.#ctor(System.String)] Missing &lt;param name=&quot;json&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.GazeData.#ctor(TETCSharpClient.Data.GazeData)] Missing &lt;param name=&quot;other&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.GazeData.Clone] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.GazeData.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.GazeData.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.GazeData.ToJson] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.MeanError.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.MeanError.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.#ctor(System.Double,System.Double)] Missing &lt;param name=&quot;x&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.#ctor(System.Double,System.Double)] Missing &lt;param name=&quot;y&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.#ctor(TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;point&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Add(TETCSharpClient.Data.Point2D)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Add(TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;p2&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Average] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Clone] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Divide(System.Double)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Divide(System.Double)] Missing &lt;param name=&quot;k&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Divide(System.Int32)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Divide(System.Int32)] Missing &lt;param name=&quot;k&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Multiply(System.Double)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Multiply(System.Double)] Missing &lt;param name=&quot;k&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Multiply(System.Int32)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Multiply(System.Int32)] Missing &lt;param name=&quot;k&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Addition(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Addition(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;point1&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Addition(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;point2&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Multiply(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Multiply(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;point1&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Multiply(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;multi&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Subtraction(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Subtraction(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;point1&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.op_Subtraction(TETCSharpClient.Data.Point2D,TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;point2&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Subtract(TETCSharpClient.Data.Point2D)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point2D.Subtract(TETCSharpClient.Data.Point2D)] Missing &lt;param name=&quot;p2&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point3D.#ctor(System.Double,System.Double,System.Double)] Missing &lt;param name=&quot;x&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point3D.#ctor(System.Double,System.Double,System.Double)] Missing &lt;param name=&quot;y&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point3D.#ctor(System.Double,System.Double,System.Double)] Missing &lt;param name=&quot;z&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point3D.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.Point3D.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.StandardDeviation.Equals(System.Object)] Missing &lt;returns&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+BuildAssembler : warning : ShowMissingComponent: [M:TETCSharpClient.Data.StandardDeviation.Equals(System.Object)] Missing &lt;param name=&quot;o&quot;/&gt; documentation [M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj]
+  Processed 220 topic(s)
+  79 warning(s)
+  CopyFromIndexComponent: &quot;reflection&quot; in-memory cache entries used: 3 of 15.
+  CopyFromIndexComponent: &quot;comments&quot; in-memory cache entries used: 2 of 30.
+Done Building Project &quot;M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\BuildReferenceTopics.proj&quot; (default targets).
+
+Build succeeded.
+
+Time Elapsed 00:00:07.73
+    Last step completed in 00:00:07.8096
+</buildStep>
+<buildStep step="CombiningIntermediateTocFiles">
+Combining conceptual and API intermediate TOC files...
+
+Clearing any prior web output
+    Last step completed in 00:00:00.0029
+</buildStep>
+<buildStep step="ExtractingHtmlInfo">
+Extracting HTML info for HTML Help 1 and/or website...
+[C:\Program Files (x86)\MSBuild\12.0\bin\MSBuild.exe]
+Sandcastle Help File Builder, version 2014.4.22.0
+Copyright &#184; 2006-2014, Eric Woodruff, All Rights Reserved
+E-Mail: Eric@EWoodruff.us
+
+Using LCID &#39;1033&#39;, code page &#39;65001&#39;, encoding charset &#39;UTF-8&#39;.
+
+Processing website files in M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website
+Processed 221 HTML files
+Sorting keywords and generating See Also indices
+Saving website keyword index to M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\WebKI.xml
+Saving website table of contents to M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\WebTOC.xml
+    Last step completed in 00:00:00.2012
+</buildStep>
+<buildStep step="CopyStandardHelpContent">
+Copying standard help content...
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\alert_caution.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\alert_caution.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\alert_note.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\alert_note.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\alert_security.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\alert_security.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\CFW.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\CFW.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\Collapsed.png -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\Collapsed.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\Expanded.png -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\Expanded.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\favicon.ico -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\favicon.ico
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privclass.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privdelegate.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privenumeration.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privevent.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privextension.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privfield.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privinterface.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privmethod.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privproperty.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\privstructure.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\privstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protclass.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protdelegate.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protenumeration.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protevent.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protextension.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protfield.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protinterface.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protmethod.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protoperator.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protoperator.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protproperty.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\protstructure.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\protstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubclass.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubclass.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubdelegate.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubdelegate.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubenumeration.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubenumeration.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubevent.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubevent.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubextension.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubextension.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubfield.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubfield.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubinterface.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubinterface.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubmethod.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubmethod.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\puboperator.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\puboperator.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubproperty.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubproperty.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\pubstructure.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\pubstructure.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\slMobile.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\slMobile.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\static.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\static.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\icons\xna.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\icons\xna.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\scripts\branding.js -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\scripts\branding.js
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-cs-CZ.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-cs-CZ.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-de-DE.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-de-DE.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-en-US.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-en-US.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-es-ES.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-es-ES.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-fr-FR.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-fr-FR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-it-IT.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-it-IT.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ja-JP.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-ja-JP.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ko-KR.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-ko-KR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-pl-PL.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-pl-PL.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-pt-BR.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-pt-BR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-ru-RU.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-ru-RU.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-tr-TR.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-tr-TR.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-zh-CN.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-zh-CN.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding-zh-TW.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding-zh-TW.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\PresentationStyles\VS2013\styles\branding.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\styles\branding.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\CloseSearch.png -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\CloseSearch.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\CollapseAll.png -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\CollapseAll.png
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\Collapsed.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\Collapsed.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\Expanded.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\Expanded.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\favicon.ico -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\favicon.ico
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\FillNode.aspx -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\FillNode.aspx
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\FillNode.php -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\FillNode.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\Index.aspx -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\Index.aspx
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\Index.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\Index.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\index.html -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\index.html
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\index.php -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\index.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\Item.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\Item.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\LoadIndexKeywords.aspx -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\LoadIndexKeywords.aspx
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\LoadIndexKeywords.php -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\LoadIndexKeywords.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\Search.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\Search.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\SearchHelp.aspx -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\SearchHelp.aspx
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\SearchHelp.inc.php -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\SearchHelp.inc.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\SearchHelp.php -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\SearchHelp.php
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\Splitter.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\Splitter.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\SyncTOC.gif -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\SyncTOC.gif
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\TOC.css -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\TOC.css
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\TOC.js -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\TOC.js
+C:\Program Files (x86)\EWSoftware\Sandcastle Help File Builder\\Web\Web.Config -&gt; M:\MPET\CSharp\SDK\TETCSharpClient\DocBuilder\Help\Working\Output\Website\.\Web.Config
+    Last step completed in 00:00:00.4082
+</buildStep>
+<buildStep step="GenerateHelpFormatTableOfContents">
+Generating website table of contents file...
+    Last step completed in 00:00:00.0020
+</buildStep>
+<buildStep step="GenerateFullTextIndex">
+Generating full-text index for the website...
+
+    Last step completed in 00:00:00.3164
+</buildStep>
+<buildStep step="CopyingWebsiteFiles">
+Copying website files to output folder...
+
+Copied 100 files
+Copied 200 files
+Copied 300 files
+Copied 327 files for the website content
+    Last step completed in 00:00:00.1445
+</buildStep>
+<buildStep step="CleanIntermediates">
+Removing intermediate files...
+    Last step completed in 00:00:00.0391
+</buildStep>
+<buildStep step="Completed">
+
+Build completed successfully at 05-09-2014 11:59 .  Total time: 00:00:15,1396
+
+</buildStep>
+</shfbBuild>

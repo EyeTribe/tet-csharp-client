@@ -1,0 +1,49 @@
+﻿<html><head><meta http-equiv="X-UA-Compatible" content="IE=edge" /><link rel="shortcut icon" href="../icons/favicon.ico" /><link rel="stylesheet" type="text/css" href="../styles/branding.css" /><link rel="stylesheet" type="text/css" href="../styles/branding-en-US.css" /><script type="text/javascript" src="../scripts/branding.js"></script><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>TETCSharpClient Namespace</title><meta name="Language" content="en-us" /><meta name="System.Keywords" content="TETCSharpClient namespace" /><meta name="Microsoft.Help.F1" content="TETCSharpClient" /><meta name="Microsoft.Help.Id" content="N:TETCSharpClient" /><meta name="Microsoft.Help.ContentType" content="Reference" /><meta name="BrandingAware" content="'true'" /><meta name="container" content="TETCSharpClient" /><meta name="file" content="c3bb5e8c-26ef-2e4b-771d-a1c5165f47d9" /><meta name="guid" content="c3bb5e8c-26ef-2e4b-771d-a1c5165f47d9" /><meta name="SelfBranded" content="true" /></head><body onload="onLoad()"><div class="VS2013_outerDiv"><div class="VS2013_outerContent"><table class="TitleTable"><tr><td class="VS2013_tdTitleColumn">TETCSharpClient Namespace</td><td class="VS2013_tdRunningTitleColumn">C# SDK for The Eye Tribe Tracker</td></tr></table><div id="mainSection"><div id="mainBody"><span class="introStyle"></span><div class="summary"></div><div class="VS2013_CollapsibleAreaRegion"><span class="VS2013_RegionTitle" onclick="ExpandCollapse('ID0RB')" onkeypress="ExpandCollapse_CheckKey('ID0RB', event)" tabindex="0"><img id="ID0RBToggle" class="CollapseToggle" src="../icons/Expanded.png" />Classes</span></div><div id="ID0RBSection" class="VS2013_CollapsibleSection"><table id="typeList" class="members"><tr><th class="ps_iconColumn">
+					 
+				</th><th class="ps_nameColumn">Class</th><th class="ps_descriptionColumn">Description</th></tr><tr data="class; public"><td><img src="../icons/pubclass.gif" alt="Public class" title="Public class" /></td><td><a href="7ce82b9e-0952-6ed1-63f7-8e9c11fb43cc.htm">GazeManager</a></td><td><div class="summary">
+            This singleton is the main entry point of the TET C# Client. It manages all routines associated to gaze control.
+            Using this class a developer can 'calibrate' an eye tracking setup and attach listeners to recieve live data streams
+            of <a href="c0265cd7-58b7-3062-7837-9b541b8a8998.htm">GazeData</a> updates.
+            </div></td></tr><tr data="class; public"><td><img src="../icons/pubclass.gif" alt="Public class" title="Public class" /></td><td><a href="1f506929-384f-75cd-904c-814e0c0d3cc4.htm">GazeUtils</a></td><td><div class="summary">
+            Utility methods common to gaze control routines.
+            </div></td></tr></table></div><div class="VS2013_CollapsibleAreaRegion"><span class="VS2013_RegionTitle" onclick="ExpandCollapse('ID1RB')" onkeypress="ExpandCollapse_CheckKey('ID1RB', event)" tabindex="0"><img id="ID1RBToggle" class="CollapseToggle" src="../icons/Expanded.png" />Interfaces</span></div><div id="ID1RBSection" class="VS2013_CollapsibleSection"><table id="typeList" class="members"><tr><th class="ps_iconColumn">
+					 
+				</th><th class="ps_nameColumn">Interface</th><th class="ps_descriptionColumn">Description</th></tr><tr data="interface; public"><td><img src="../icons/pubinterface.gif" alt="Public interface" title="Public interface" /></td><td><a href="e15a5d25-8653-a48f-39c0-eebaaf9001b9.htm">ICalibrationProcessHandler</a></td><td><div class="summary">
+            Callback interface with methods associated to Calibration process.
+            </div></td></tr><tr data="interface; public"><td><img src="../icons/pubinterface.gif" alt="Public interface" title="Public interface" /></td><td><a href="fe6baa25-9d7c-ea67-ca44-b3d650bdbad2.htm">ICalibrationResultListener</a></td><td><div class="summary">
+            Callback interface with methods associated to the changes of CalibrationResult.
+            This interface should be implemented by classes that are to recieve only changes in CalibrationResult
+            and who are _not_ to perform the calibration process itself.
+            </div></td></tr><tr data="interface; public"><td><img src="../icons/pubinterface.gif" alt="Public interface" title="Public interface" /></td><td><a href="7fd2c8ec-1488-f3c5-eac4-06c4eac39d63.htm">IConnectionStateListener</a></td><td><div class="summary">
+            Callback interface with methods associated to the state of the connection to the
+            EyeTribe Server. This interface should be implemented by classes that are to
+            receive notifications of changes in the connection state and handle these
+            accordingly. This could be a class in the 'View' layer telling the user that the
+            connection to the EyeTribe Server was lost.
+            </div></td></tr><tr data="interface; public"><td><img src="../icons/pubinterface.gif" alt="Public interface" title="Public interface" /></td><td><a href="0da7fea9-89ae-c721-1de8-451d72a0635a.htm">IGazeListener</a></td><td><div class="summary">
+            Callback interface with methods associated to Gaze Tracking.
+            This interface should be implemented by classes that are to recieve live GazeData stream.
+            </div></td></tr><tr data="interface; public"><td><img src="../icons/pubinterface.gif" alt="Public interface" title="Public interface" /></td><td><a href="7571eedf-fe07-ec96-7f45-56c7c6183ef5.htm">ITrackerStateListener</a></td><td><div class="summary">
+            Callback interface with methods associated to the state of the physical Tracker device.
+            This interface should be implemented by classes that are to receive notifications of 
+            changes in the state of the Tracker and handle these accordingly. This could be a class
+            in the 'View' layer telling the user that a Tracker has disconnected.
+            </div></td></tr></table></div><div class="VS2013_CollapsibleAreaRegion"><span class="VS2013_RegionTitle" onclick="ExpandCollapse('ID2RB')" onkeypress="ExpandCollapse_CheckKey('ID2RB', event)" tabindex="0"><img id="ID2RBToggle" class="CollapseToggle" src="../icons/Expanded.png" />Enumerations</span></div><div id="ID2RBSection" class="VS2013_CollapsibleSection"><table id="typeList" class="members"><tr><th class="ps_iconColumn">
+					 
+				</th><th class="ps_nameColumn">Enumeration</th><th class="ps_descriptionColumn">Description</th></tr><tr data="enumeration; public"><td><img src="../icons/pubenumeration.gif" alt="Public enumeration" title="Public enumeration" /></td><td><a href="965a3cb8-0473-bbaa-870f-df979639a4a9.htm">GazeManager<span id="ID0EBABDAAAAAABAA"> </span><script type="text/javascript">
+					addToLanSpecTextIdSet("ID0EBABDAAAAAABAA?vb=.|cpp=::|cs=.|fs=.|nu=.");
+				</script>ApiVersion</a></td><td><div class="summary">
+            The EyeTribe API compliance levels
+            </div></td></tr><tr data="enumeration; public"><td><img src="../icons/pubenumeration.gif" alt="Public enumeration" title="Public enumeration" /></td><td><a href="bde01908-f949-c705-68a4-444a76ff4305.htm">GazeManager<span id="ID0EBABCAAAAAABAA"> </span><script type="text/javascript">
+					addToLanSpecTextIdSet("ID0EBABCAAAAAABAA?vb=.|cpp=::|cs=.|fs=.|nu=.");
+				</script>ClientMode</a></td><td><div class="summary">
+            The possible frame grabbing modes of the Tracker Server
+            </div></td></tr><tr data="enumeration; public"><td><img src="../icons/pubenumeration.gif" alt="Public enumeration" title="Public enumeration" /></td><td><a href="0b2c650a-f114-ba41-eca7-9ceacfc9c36b.htm">GazeManager<span id="ID0EBABBAAAAAABAA"> </span><script type="text/javascript">
+					addToLanSpecTextIdSet("ID0EBABBAAAAAABAA?vb=.|cpp=::|cs=.|fs=.|nu=.");
+				</script>FrameRate</a></td><td><div class="summary">
+            The possible frame rates of the Tracker Server
+            </div></td></tr><tr data="enumeration; public"><td><img src="../icons/pubenumeration.gif" alt="Public enumeration" title="Public enumeration" /></td><td><a href="2e37d1e2-73c0-f041-feb9-3a3ad6a768dc.htm">GazeManager<span id="ID0EBABAAAAAAABAA"> </span><script type="text/javascript">
+					addToLanSpecTextIdSet("ID0EBABAAAAAAABAA?vb=.|cpp=::|cs=.|fs=.|nu=.");
+				</script>TrackerState</a></td><td><div class="summary">
+            The possible states of the Tracer device
+            </div></td></tr></table></div></div></div></div></div><div id="VS2013_footer" class="VS2013_footer"></div></body></html>
