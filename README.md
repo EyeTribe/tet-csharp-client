@@ -17,12 +17,14 @@ Dependencies
 
 The implementation is .NET 3.5 compliant and uses [Json.NET](http://james.newtonking.com/json) for parsing.
 
-
 Build
 ----
 
 To build, open solution file in compliant [Visual Studio](http://www.visualstudio.com/) version and build.
 
+Documentation
+----
+Find documentation of this library at [TET C# Doc](http://theeyetribe.github.io/tet-csharp-client).
 
 Samples
 ----
@@ -44,6 +46,13 @@ The complete API specification used by the C# SDK to communicate with the server
 
 Changelog
 ----
+
+0.9.34 (2014-05-09)
+- Updated project setting to MS Visual Studio 2013
+- Improved multithreading and stability in network layer
+- Fixed bug related to initialization lock
+- Fixed bug related to multi-screen setups
+- Fixed bug related to broadcasting calibration updates
 
 0.9.33 (2014-04-15)
 - Thread safe GazeManager activation/deactivation

@@ -105,7 +105,7 @@ namespace TETCSharpClient
         }
     }
 
-    public class FixedSizeQueue<T> : Queue<T>
+    internal class FixedSizeQueue<T> : Queue<T>
     {
         private int limit = -1;
 

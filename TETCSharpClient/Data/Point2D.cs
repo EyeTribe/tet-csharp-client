@@ -47,13 +47,15 @@ namespace TETCSharpClient.Data
 
         public override bool Equals(Object o)
         {
-            var other = o as Point2D;
-            if (other != null)
-            {
-                return x == other.x && y == other.y;
-            }
+            if (ReferenceEquals(this, o))
+                return true;
 
-            return false;
+            if (!(o is Point2D))
+                return false;
+
+            var other = o as Point2D;
+
+            return Double.Equals(x, other.x) && Double.Equals(y, other.y);
         }
 
         public static Point2D operator +(Point2D point1, Point2D point2)

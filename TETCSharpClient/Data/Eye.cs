@@ -58,17 +58,19 @@ namespace TETCSharpClient.Data
 
         public override bool Equals(Object o)
         {
-            var other = o as Eye;
-            if (other != null)
-            {
-                return
-                    RawCoordinates.Equals(other.RawCoordinates) &&
-                    SmoothedCoordinates.Equals(other.SmoothedCoordinates) &&
-                    PupilCenterCoordinates.Equals(other.PupilCenterCoordinates) &&
-                    PupilSize == other.PupilSize;
-            }
+            if (ReferenceEquals(this, o))
+                return true;
 
-            return false;
+            if (!(o is Eye))
+                return false;
+
+            var other = o as Eye;
+
+            return
+                RawCoordinates.Equals(other.RawCoordinates) &&
+                SmoothedCoordinates.Equals(other.SmoothedCoordinates) &&
+                PupilCenterCoordinates.Equals(other.PupilCenterCoordinates) &&
+                Double.Equals(PupilSize, other.PupilSize);
         }
     }
 }

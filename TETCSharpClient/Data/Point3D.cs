@@ -1,4 +1,5 @@
-﻿namespace TETCSharpClient.Data
+﻿using System;
+namespace TETCSharpClient.Data
 {
     public class Point3D : Point2D
     {
@@ -15,6 +16,19 @@
         {
             get { return z; }
             set { z = value; }
+        }
+
+        public override bool Equals(Object o)
+        {
+            if (ReferenceEquals(this, o))
+                return true;
+
+            if (!(o is Point3D))
+                return false;
+
+            var other = o as Point3D;
+
+            return base.Equals(o) && Double.Equals(z, other.z);
         }
     }
 }

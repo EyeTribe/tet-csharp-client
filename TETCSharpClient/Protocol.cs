@@ -1,6 +1,6 @@
 ﻿namespace TETCSharpClient
 {
-    public class Protocol
+    internal class Protocol
     {
         public const int STATUSCODE_CALIBRATION_UPDATE = 800;
         public const int STATUSCODE_SCREEN_UPDATE = 801;

@@ -2,7 +2,7 @@
 
 namespace TETCSharpClient.Reply
 {
-    public class ReplyBase
+    internal class ReplyBase
     {
         [JsonProperty(PropertyName = Protocol.KEY_CATEGORY)]
         public string Category { set; get; }

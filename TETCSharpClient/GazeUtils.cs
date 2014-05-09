@@ -14,8 +14,8 @@ namespace TETCSharpClient
         /// <summary>
         /// Find average pupil center of two eyes.
         /// </summary>
-        /// <param name="leftEye"/></param>
-        /// <param name="rightEye"/></param>
+        /// <param name="leftEye"></param>
+        /// <param name="rightEye"></param>
         /// <returns>the average center point in normalized values</returns>
         public static Point2D getEyesCenterNormalized(Eye leftEye, Eye rightEye)
         {
@@ -43,7 +43,7 @@ namespace TETCSharpClient
         /// <summary>
         /// Find average pupil center of two eyes.
         /// </summary>
-        /// <param name="gazeData"/>gaze data frame to base calculation upon</param>
+        /// <param name="gazeData">gaze data frame to base calculation upon</param>
         /// <returns>the average center point in normalized values</returns>
         public static Point2D getEyesCenterNormalized(GazeData gazeData)
         {
@@ -56,8 +56,10 @@ namespace TETCSharpClient
         /// <summary>
         /// Find average pupil center of two eyes.
         /// </summary>
-        /// <param name="leftEye"/></param>
-        /// <param name="rightEye"/></param>
+        /// <param name="leftEye"></param>
+        /// <param name="rightEye"></param>
+        /// <param name="screenWidth"></param>
+        /// <param name="screenHeight"></param>
         /// <returns>the average center point in pixels</returns>
         public static Point2D getEyesCenterPixels(Eye leftEye, Eye rightEye, int screenWidth, int screenHeight)
         {
@@ -69,7 +71,9 @@ namespace TETCSharpClient
         /// <summary>
         /// Find average pupil center of two eyes.
         /// </summary>
-        /// <param name="gazeData"/>gaze data frame to base calculation upon</param>
+        /// <param name="gazeData">gaze data frame to base calculation upon</param>
+        /// <param name="screenWidth"></param>
+        /// <param name="screenHeight"></param>
         /// <returns>the average center point in pixels</returns>
         public static Point2D getEyesCenterPixels(GazeData gazeData, int screenWidth, int screenHeight)
         {
@@ -86,8 +90,8 @@ namespace TETCSharpClient
         /// Calculates distance between pupil centers based on previously
         /// recorded min and max values
         /// </summary>
-        /// <param name="leftEye"/></param>
-        /// <param name="rightEye"/></param>
+        /// <param name="leftEye"></param>
+        /// <param name="rightEye"></param>
         /// <returns>a normalized value [0..1]</returns>
         public static double getEyesDistanceNormalized(Eye leftEye, Eye rightEye)
         {
@@ -107,7 +111,7 @@ namespace TETCSharpClient
         /// Calculates distance between pupil centers based on previously
         /// recorded min and max values
         /// </summary>
-        /// <param name="gazeData"/>gaze data frame to base calculation upon</param>
+        /// <param name="gazeData">gaze data frame to base calculation upon</param>
         /// <returns>a normalized value [0..1]</returns>
         public static double getEyesDistanceNormalized(GazeData gazeData)
         {
@@ -142,9 +146,9 @@ namespace TETCSharpClient
         /// <summary>
         /// Normalizes a pixel point based on screen dims
         /// </summary>
-        /// <param name="point"/>point in pixels to normalize</param>
-        /// <param name="screenWidth"/>the width value to base normalization upon</param>
-        /// <param name="screenHeight"/>the height value to base normalization upon</param>
+        /// <param name="point">point in pixels to normalize</param>
+        /// <param name="screenWidth">the width value to base normalization upon</param>
+        /// <param name="screenHeight">the height value to base normalization upon</param>
         /// <returns>normalized 2d point</returns> 
         public static Point2D getNormalizedCoords(Point2D point, int screenWidth, int screenHeight)
         {
@@ -163,9 +167,9 @@ namespace TETCSharpClient
         /// <summary>
         /// Maps a 2d pixel point into normalized space [x: -1:1 , y: -1:1]
         /// </summary>
-        /// <param name="point"/>point in pixels to normalize</param>
-        /// <param name="screenWidth"/>the width value to base normalization upon</param>
-        /// <param name="screenHeight"/>the height value to base normalization upon</param>
+        /// <param name="point">point in pixels to normalize</param>
+        /// <param name="screenWidth">the width value to base normalization upon</param>
+        /// <param name="screenHeight">the height value to base normalization upon</param>
         /// <returns>normalized 2d point</returns> 
         public static Point2D getNormalizedMapping(Point2D point, int screenWidth, int screenHeight)
         {

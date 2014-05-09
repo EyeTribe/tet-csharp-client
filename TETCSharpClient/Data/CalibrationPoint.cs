@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace TETCSharpClient.Data
 {
@@ -62,6 +63,24 @@ namespace TETCSharpClient.Data
             Accuracy = new Accuracy();
             MeanError = new MeanError();
             StandardDeviation = new StandardDeviation();
+        }
+        public override bool Equals(Object o)
+        {
+            if (ReferenceEquals(this, o))
+                return true;
+
+            if (!(o is CalibrationPoint))
+                return false;
+
+            var other = o as CalibrationPoint;
+
+            return
+                this.State == other.State &&
+                Coordinates.Equals(other.Coordinates) &&
+                MeanEstimatedCoords.Equals(other.MeanEstimatedCoords) &&
+                Accuracy.Equals(other.Accuracy) &&
+                MeanError.Equals(other.MeanError) &&
+                StandardDeviation.Equals(other.StandardDeviation);
         }
     }
 }

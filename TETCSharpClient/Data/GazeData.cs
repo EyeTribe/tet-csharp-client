@@ -132,20 +132,22 @@ namespace TETCSharpClient.Data
 
         public override bool Equals(Object o)
         {
-            var other = o as GazeData;
-            if (other != null)
-            {
-                return
-                    State == other.State &&
-                    TimeStamp == other.TimeStamp &&
-                    RawCoordinates.Equals(other.RawCoordinates) &&
-                    SmoothedCoordinates.Equals(other.SmoothedCoordinates) &&
-                    LeftEye.Equals(other.LeftEye) &&
-                    RightEye.Equals(other.RightEye) &&
-                    IsFixated == other.IsFixated;
-            }
+            if (ReferenceEquals(this, o))
+                return true;
 
-            return false;
+            if (!(o is GazeData))
+                return false;
+
+            var other = o as GazeData;
+
+            return
+                State == other.State &&
+                TimeStamp == other.TimeStamp &&
+                RawCoordinates.Equals(other.RawCoordinates) &&
+                SmoothedCoordinates.Equals(other.SmoothedCoordinates) &&
+                LeftEye.Equals(other.LeftEye) &&
+                RightEye.Equals(other.RightEye) &&
+                IsFixated == other.IsFixated;
         }
 
         public String ToJson()

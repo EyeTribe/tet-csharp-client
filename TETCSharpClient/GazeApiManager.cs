@@ -280,8 +280,8 @@ namespace TETCSharpClient
             gr.Values.ScreenIndex = screenIndex;
             gr.Values.ScreenResolutionWidth = screenResW;
             gr.Values.ScreenResolutionHeight = screenResH;
-            gr.Values.ScreenPhysicalWidth = screenResW;
-            gr.Values.ScreenPhysicalHeight = screenResH;
+            gr.Values.ScreenPhysicalWidth = screenPsyW;
+            gr.Values.ScreenPhysicalHeight = screenPsyH;
 
             Request(JsonConvert.SerializeObject(gr));
         }

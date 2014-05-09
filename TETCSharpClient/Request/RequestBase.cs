@@ -2,7 +2,7 @@
 
 namespace TETCSharpClient.Request
 {
-    public class RequestBase
+    internal class RequestBase
     {
         public RequestBase()
         {
