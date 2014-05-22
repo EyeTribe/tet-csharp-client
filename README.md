@@ -47,6 +47,9 @@ The complete API specification used by the C# SDK to communicate with the server
 Changelog
 ----
 
+0.9.35 (2014-05-20)
+- Updated license
+
 0.9.34 (2014-05-09)
 - Updated project setting to MS Visual Studio 2013
 - Improved multithreading and stability in network layer
