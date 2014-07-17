@@ -46,6 +46,9 @@ The complete API specification used by the C# SDK to communicate with the server
 
 Changelog
 ----
+0.9.36 (2014-07-17)
+- Fixed bug, causing offset in GazeData timestamp
+- Added method GetTimeDeltaNow() to GazeUtils
 
 0.9.35 (2014-05-20)
 - Updated license

@@ -36,6 +36,8 @@ namespace TETCSharpClient
 
         public const int FRAME_QUEUE_SIZE = 10;
 
+        public const string TIMESTAMP_STRING_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
+
         #endregion
 
         #region Enums
@@ -339,12 +341,13 @@ namespace TETCSharpClient
                                         GazeData gd = value.ToObject<GazeData>();
 
                                         //fixing timestamp based on string representation, Json 32bit int issue
-                                        if (null != gd.TimeStampString && !String.IsNullOrEmpty(gd.TimeStampString))
+                                        if (!String.IsNullOrEmpty(gd.TimeStampString))
                                         {
                                             try
                                             {
-                                                DateTime dt = Convert.ToDateTime(gd.TimeStampString);
-                                                gd.TimeStamp = (long)(dt - new DateTime(1970, 1, 1)).TotalMilliseconds; //UTC
+                                                DateTime gdTime = DateTime.ParseExact(gd.TimeStampString, TIMESTAMP_STRING_FORMAT,
+                                                    System.Globalization.CultureInfo.InvariantCulture);
+                                                gd.TimeStamp = (long)((double)gdTime.Ticks / TimeSpan.TicksPerMillisecond);
                                             }
                                             catch (Exception e)
                                             {
@@ -355,7 +358,7 @@ namespace TETCSharpClient
                                         //Add gaze update to high frequency broadcasting queue
                                         lock (((ICollection)queueGazeData).SyncRoot)
                                         {
-                                            queueGazeData.Enqueue(value.ToObject<GazeData>());
+                                            queueGazeData.Enqueue(gd);
                                         }
 
                                         events.GetUpdateHandle().Set();

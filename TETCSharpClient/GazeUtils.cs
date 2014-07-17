@@ -194,5 +194,15 @@ namespace TETCSharpClient
 
             return normMap;
         }
+
+        /// <summary>
+        /// Returns the time difference between GazeData timestamp and current system time in millis
+        /// </summary>
+        /// <param name="gazeData">gaze data frame to base calculation upon</param>
+        /// <returns>time difference in milliseconds</returns> 
+        public static long GetTimeDeltaNow(GazeData gazeData)
+        {
+            return (long)Math.Round( ((double)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - gazeData.TimeStamp);
+        }
     }
 }
