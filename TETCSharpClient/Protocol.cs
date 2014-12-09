@@ -62,8 +62,8 @@ namespace TETCSharpClient
         public const string FRAME_Y = "y";
         public const string FRAME_LEFT_EYE = "lefteye";
         public const string FRAME_RIGHT_EYE = "righteye";
-        public const string FRAME_PUPIL_SIZE = "psize";
-        public const string FRAME_PUPIL_CENTER = "pcenter";
+        public const string FRAME_EYE_PUPIL_SIZE = "psize";
+        public const string FRAME_EYE_PUPIL_CENTER = "pcenter";
 
         public const string CALIBRESULT_RESULT = "result";
         public const string CALIBRESULT_AVERAGE_ERROR_DEGREES = "deg";

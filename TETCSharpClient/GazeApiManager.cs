@@ -37,8 +37,7 @@ namespace TETCSharpClient
         private TcpClient socket;
         private IncomingStreamHandler incomingStreamHandler;
         private OutgoingStreamHandler outgoingStreamHandler;
-        private WaitHandleWrap outEvent;
-        private Queue<String> requestQueue;
+        private BlockingQueue<String> requestQueue;
         private IGazeApiReponseListener responseListener;
         private IGazeApiConnectionListener connectionListener;
 
@@ -55,7 +54,7 @@ namespace TETCSharpClient
         {
             this.responseListener = responseListener;
             this.connectionListener = connectionListener;
-            requestQueue = new Queue<String>();
+            requestQueue = new BlockingQueue<String>();
         }
 
         #endregion
@@ -66,11 +65,11 @@ namespace TETCSharpClient
         {
             lock (initializationLock)
             {
-                Close();
+                if (IsConnected())
+                    Close();
 
                 try
                 {
-                    outEvent = new WaitHandleWrap();
                     socket = new TcpClient(host, port);
 
                     //notify connection change
@@ -80,7 +79,7 @@ namespace TETCSharpClient
                     incomingStreamHandler = new IncomingStreamHandler(socket, responseListener, connectionListener, this);
                     incomingStreamHandler.Start();
 
-                    outgoingStreamHandler = new OutgoingStreamHandler(socket, requestQueue, outEvent, connectionListener, this);
+                    outgoingStreamHandler = new OutgoingStreamHandler(socket, requestQueue, connectionListener, this);
                     outgoingStreamHandler.Start();
                 }
                 catch (SocketException se)
@@ -111,10 +110,7 @@ namespace TETCSharpClient
                 try
                 {
                     if (null != requestQueue)
-                        lock (((ICollection)requestQueue).SyncRoot)
-                        {
-                            requestQueue.Clear();
-                        }
+                        requestQueue.Stop();
 
                     if (null != incomingStreamHandler)
                     {
@@ -152,12 +148,7 @@ namespace TETCSharpClient
         protected void Request(string request)
         {
             if (IsConnected())
-                lock (((ICollection)requestQueue).SyncRoot)
-                {
-                    requestQueue.Enqueue(request);
-                    //Signal Event that queue is populated
-                    outEvent.GetUpdateHandle().Set();
-                }
+                requestQueue.Enqueue(request);
         }
 
         public void RequestTracker(GazeManager.ClientMode mode, GazeManager.ApiVersion version)
@@ -396,27 +387,27 @@ namespace TETCSharpClient
         private readonly int NUM_WRITE_ATTEMPTS_BEFORE_FAIL = 3;
         private int numWriteAttempt;
 
+        private bool isRunning;
         private Thread workerThread;
         private TcpClient socket;
         private StreamWriter writer;
-        private Queue<String> queue;
-        private WaitHandleWrap events;
+        private BlockingQueue<String> blockingOutQueue;
         private IGazeApiConnectionListener connectionListener;
         private GazeApiManager networkLayer;
 
-        public OutgoingStreamHandler(TcpClient _socket, Queue<String> _queue, WaitHandleWrap _events, IGazeApiConnectionListener _connectionListener, GazeApiManager _networkLayer)
+        public OutgoingStreamHandler(TcpClient _socket, BlockingQueue<String> _queue, IGazeApiConnectionListener _connectionListener, GazeApiManager _networkLayer)
         {
             this.socket = _socket;
-            this.queue = _queue;
-            this.events = _events;
             this.connectionListener = _connectionListener;
             this.networkLayer = _networkLayer;
+            this.blockingOutQueue = _queue;
         }
 
         public void Start()
         {
             lock (this)
             {
+                isRunning = true;
                 ThreadStart ts = Work;
                 workerThread = new Thread(ts);
                 workerThread.Start();
@@ -427,11 +418,19 @@ namespace TETCSharpClient
         {
             lock (this)
             {
-                if (null != writer)
-                    writer.Close();
+                isRunning = false;
 
-                events.GetKillHandle().Set();
-                events.GetUpdateHandle().Set();
+                try
+                {
+                    if (null != writer)
+                        writer.Close();
+                }
+                catch (Exception e)
+                {
+                }
+
+                if (null != blockingOutQueue)
+                    blockingOutQueue.Stop();
             }
         }
 
@@ -443,26 +442,16 @@ namespace TETCSharpClient
                 writer = new StreamWriter(socket.GetStream(), Encoding.ASCII);
 
                 //while waiting for queue to populate and thread not killed
-                while (!events.GetKillHandle().WaitOne(0, false))
+                while (isRunning)
                 {
                     try
                     {
-                        events.GetUpdateHandle().WaitOne();
+                        request = blockingOutQueue.Dequeue();
+                        writer.WriteLine(request);
+                        writer.Flush();
 
-                        //handle all pending request before going to sleep
-                        while (queue.Count > 0)
-                        {
-                            lock (((ICollection)queue).SyncRoot)
-                            {
-                                request = queue.Dequeue();
-                            }
-
-                            writer.WriteLine(request);
-                            writer.Flush();
-
-                            if (numWriteAttempt > 0)
-                                numWriteAttempt = 0;
-                        }
+                        if (numWriteAttempt > 0)
+                            numWriteAttempt = 0;
                     }
                     catch (IOException ioe)
                     {
@@ -479,9 +468,7 @@ namespace TETCSharpClient
                         else
                         {
                             //else retry request asap
-                            queue.Enqueue(request);
-                            //Signal Event that queue is populated
-                            events.GetUpdateHandle().Set();
+                            blockingOutQueue.Enqueue(request);
                         }
                     }
                     catch (Exception e)
@@ -497,6 +484,53 @@ namespace TETCSharpClient
             finally
             {
                 Debug.WriteLine("OutgoingStreamHandler closing down");
+            }
+        }
+    }
+
+    internal class BlockingQueue<T>
+    {
+        private readonly Queue<T> queue = new Queue<T>();
+        private bool isStopped;
+
+        public BlockingQueue() { }
+
+        public int Count { get { lock (queue) { return null != queue ? queue.Count : 0; } } }
+
+        public void Enqueue(T item)
+        {
+            lock (queue)
+            {
+                if (isStopped)
+                    return;
+                queue.Enqueue(item);
+                if (queue.Count == 1)
+                    Monitor.PulseAll(queue);
+            }
+        }
+
+        public T Dequeue()
+        {
+            lock (queue)
+            {
+                if (isStopped)
+                    return default(T);
+                if (queue.Count == 0)
+                    Monitor.Wait(queue);
+                if (isStopped)
+                    return default(T);
+                else
+                    return queue.Dequeue();
+            }
+        }
+
+        public void Stop()
+        {
+            lock (queue)
+            {
+                queue.Clear();
+                isStopped = true;
+                Monitor.PulseAll(queue);
             }
         }
     }

@@ -114,11 +114,11 @@ namespace TETCSharpClient.Data
                 State = other.State;
                 TimeStamp = other.TimeStamp;
 
-                RawCoordinates = other.RawCoordinates.Clone();
-                SmoothedCoordinates = other.SmoothedCoordinates.Clone();
+                RawCoordinates = new Point2D(other.RawCoordinates);
+                SmoothedCoordinates = new Point2D(other.SmoothedCoordinates);
 
-                LeftEye = other.LeftEye.Clone();
-                RightEye = other.RightEye.Clone();
+                LeftEye = new Eye(other.LeftEye);
+                RightEye = new Eye(other.RightEye);
 
                 IsFixated = other.IsFixated;
             }
@@ -132,11 +132,6 @@ namespace TETCSharpClient.Data
         #endregion
 
         #region Public methods
-
-        public GazeData Clone()
-        {
-            return new GazeData(this);
-        }
 
         public override bool Equals(Object o)
         {
@@ -163,6 +158,56 @@ namespace TETCSharpClient.Data
             return JsonConvert.SerializeObject(this);
         }
 
+        public String StateToString()
+        {
+            String stateString = "";
+            bool ticker = false;
+
+            if ((STATE_TRACKING_GAZE & State) != 0)
+            {
+                stateString += "STATE_TRACKING_GAZE";
+                ticker = true;
+            }
+
+            if ((STATE_TRACKING_GAZE & State) != 0)
+            {
+                stateString += (ticker ? " | " : "") + "STATE_TRACKING_EYES";
+                ticker = true;
+            }
+
+            if ((STATE_TRACKING_PRESENCE & State) != 0)
+            {
+                stateString += (ticker ? " | " : "") + "STATE_TRACKING_PRESENCE";
+                ticker = true;
+            }
+
+            if ((STATE_TRACKING_FAIL & State) != 0)
+            {
+                stateString += (ticker ? " | " : "") + "STATE_TRACKING_FAIL";
+                ticker = true;
+            }
+
+            if ((STATE_TRACKING_LOST & State) != 0)
+            {
+                stateString += (ticker ? " | " : "") + "STATE_TRACKING_LOST";
+                ticker = true;
+            }
+
+            return stateString;
+        }
+
+        private const int NO_TRACKING_MASK = STATE_TRACKING_LOST | STATE_TRACKING_FAIL;
+
+        public Boolean HasSmoothedGazeCoordinates()
+        {
+            return (State & NO_TRACKING_MASK) == 0 && SmoothedCoordinates.X != 0 && SmoothedCoordinates.Y != 0;
+        }
+
+        public Boolean hasRawGazeCoordinates()
+        {
+            return (State & NO_TRACKING_MASK) == 0 && RawCoordinates.X != 0 && RawCoordinates.Y != 0;
+        }
+
         #endregion
 
         #region Private methods
@@ -172,11 +217,11 @@ namespace TETCSharpClient.Data
             State = other.State;
             TimeStamp = other.TimeStamp;
 
-            RawCoordinates = other.RawCoordinates;
-            SmoothedCoordinates = other.SmoothedCoordinates;
+            RawCoordinates = new Point2D(other.RawCoordinates);
+            SmoothedCoordinates = new Point2D(other.SmoothedCoordinates);
 
-            LeftEye = other.LeftEye;
-            RightEye = other.RightEye;
+            LeftEye = new Eye(other.LeftEye);
+            RightEye = new Eye(other.RightEye);
 
             IsFixated = other.IsFixated;
         }

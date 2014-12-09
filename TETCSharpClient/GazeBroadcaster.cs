@@ -21,24 +21,25 @@ namespace TETCSharpClient
     /// </summary>
     internal class GazeBroadcaster
     {
-        private readonly WaitHandleWrap events;
         private readonly List<IGazeListener> gazeListeners;
-        private readonly FixedSizeQueue<GazeData> queue;
+        private readonly SingleFrameBlockingQueue<GazeData> blockingGazeQueue;
+        private bool isRunning;
         private Thread workerThread;
 
-        public GazeBroadcaster(FixedSizeQueue<GazeData> queue, List<IGazeListener> gazeListeners, WaitHandleWrap events)
+        public GazeBroadcaster(SingleFrameBlockingQueue<GazeData> queue, List<IGazeListener> gazeListeners)
         {
             this.gazeListeners = gazeListeners;
-            this.queue = queue;
-            this.events = events;
+            this.blockingGazeQueue = queue;
         }
 
         public void Start()
         {
             lock (this)
             {
+                isRunning = true;
                 var ts = new ThreadStart(Work);
                 workerThread = new Thread(ts);
+                workerThread.Name = "GazeCallback";
                 workerThread.Start();
             }
         }
@@ -47,8 +48,11 @@ namespace TETCSharpClient
         {
             lock (this)
             {
-                events.GetKillHandle().Set();
-                events.GetUpdateHandle().Set();
+                isRunning = false;
+                lock (blockingGazeQueue)
+                {
+                    Monitor.PulseAll(blockingGazeQueue);
+                }
             }
         }
 
@@ -57,27 +61,25 @@ namespace TETCSharpClient
             try
             {
                 //while thread not killed
-                while (!events.GetKillHandle().WaitOne(0, false))
+                while (isRunning)
                 {
-                    //waiting for queue to populate
-                    events.GetUpdateHandle().WaitOne();
+                    GazeData gaze = blockingGazeQueue.Take();
 
-                    GazeData gaze = null;
-
-                    lock (((ICollection)queue).SyncRoot)
+                    if (null != gaze)
                     {
-                        //Use latest in queue
-                        if (queue.Count > 0)
-                            gaze = queue.Last();  //.ToArray()[queue.Count - 1];  //.Last();
-                    }
-
-                    lock (((ICollection)gazeListeners).SyncRoot)
-                    {
-                        if (null != gaze)
+                        lock (gazeListeners)
                         {
                             foreach (IGazeListener listener in gazeListeners)
                             {
-                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnGazeUpdate), new Object[] { listener, gaze });
+                                try
+                                {
+                                     listener.OnGazeUpdate(gaze);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.Write("Exception while calling IGazeListener.onGazeUpdate() " +
+                                            "on listener " + listener + ": " + e.Message);
+                                }
                             }
                         }
                     }
@@ -92,50 +94,61 @@ namespace TETCSharpClient
                 Debug.WriteLine("Broadcaster closing down");
             }
         }
-
-        /// <summary>
-        /// Internal delegate helper method. Used fro ThreadPooling.
-        /// </summary>
-        internal static void HandleOnGazeUpdate(Object stateInfo)
-        {
-            IGazeListener listener = null;
-            try
-            {
-                Object[] objs = (Object[])stateInfo;
-                listener = (IGazeListener)objs[0];
-                GazeData gaze = (GazeData)objs[1];
-                listener.OnGazeUpdate(gaze);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Exception while calling IGazeListener.OnGazeUpdate() on listener " + listener + ": " + e.Message);
-            }
-        }
     }
 
-    internal class FixedSizeQueue<T> : Queue<T>
+    internal class SingleFrameBlockingQueue<T>
     {
-        private int limit = -1;
+        private readonly Queue<T> queue = new Queue<T>();
+        private bool isStopped;
+        public SingleFrameBlockingQueue() { }
 
-        public int Limit
-        {
-            get { return limit; }
-            set { limit = value; }
-        }
+        public int Count { get { lock (queue) { return null != queue ? queue.Count : 0; } } }
 
-        public FixedSizeQueue(int limit)
-            : base(limit)
+        public void Put(T item)
         {
-            this.Limit = limit;
-        }
-
-        public new void Enqueue(T item)
-        {
-            while (this.Count >= this.Limit)
+            lock (queue)
             {
-                this.Dequeue();
+                if (isStopped)
+                    return;
+                while (queue.Count > 0)
+                    queue.Dequeue();
+                queue.Enqueue(item);
+                if (queue.Count == 1)
+                    Monitor.PulseAll(queue);
             }
-            base.Enqueue(item);
+        }
+
+        public T Take()
+        {
+            lock (queue)
+            {
+                if (isStopped)
+                    return default(T);
+                if (queue.Count == 0)
+                    Monitor.Wait(queue);
+                if (isStopped)
+                    return default(T);
+                else
+                    return queue.Dequeue();
+            }
+        }
+
+        public void Stop()
+        {
+            lock (queue)
+            {
+                queue.Clear();
+                isStopped = true;
+                Monitor.PulseAll(queue);
+            }
+        }
+
+        public void Start()
+        {
+            lock (queue)
+            {
+                isStopped = false;
+            }
         }
     }
 }

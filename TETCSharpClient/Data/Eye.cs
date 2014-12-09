@@ -31,13 +31,13 @@ namespace TETCSharpClient.Data
         /// <summary>
         /// Pupil center coordinates in normalized values
         /// </summary>
-        [JsonProperty(PropertyName = Protocol.FRAME_PUPIL_CENTER)]
+        [JsonProperty(PropertyName = Protocol.FRAME_EYE_PUPIL_CENTER)]
         public Point2D PupilCenterCoordinates { get; set; }
 
         /// <summary>
         /// Pupil size in normalized value
         /// </summary>
-        [JsonProperty(PropertyName = Protocol.FRAME_PUPIL_SIZE)]
+        [JsonProperty(PropertyName = Protocol.FRAME_EYE_PUPIL_SIZE)]
         public double PupilSize { get; set; }
 
         public Eye()
@@ -52,16 +52,11 @@ namespace TETCSharpClient.Data
         {
             if (null != other)
             {
-                RawCoordinates = other.RawCoordinates.Clone();
-                SmoothedCoordinates = other.SmoothedCoordinates.Clone();
-                PupilCenterCoordinates = other.PupilCenterCoordinates.Clone();
+                RawCoordinates = new Point2D(other.RawCoordinates);
+                SmoothedCoordinates = new Point2D(other.SmoothedCoordinates);
+                PupilCenterCoordinates = new Point2D(other.PupilCenterCoordinates);
                 PupilSize = other.PupilSize;
             }
-        }
-
-        public Eye Clone()
-        {
-            return new Eye(this);
         }
 
         public override bool Equals(Object o)

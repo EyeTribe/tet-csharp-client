@@ -15,8 +15,10 @@ namespace TETCSharpClient.Data
     /// </summary>
     public class Point2D
     {
-        private double x;
-        private double y;
+        protected double x;
+        protected double y;
+
+        public static readonly Point2D zero = new Point2D();
 
         public Point2D()
         {
@@ -48,11 +50,6 @@ namespace TETCSharpClient.Data
             set { y = value; }
         }
 
-        public Point2D Clone()
-        {
-            return new Point2D(this);
-        }
-
         public override bool Equals(Object o)
         {
             if (ReferenceEquals(this, o))
@@ -76,9 +73,24 @@ namespace TETCSharpClient.Data
             return new Point2D { x = point1.x - point2.x, y = point1.y - point2.y };
         }
 
+        public static Point2D operator -(Point2D point1)
+        {
+            return new Point2D(-point1.x, -point1.y);
+        }
+
         public static Point2D operator *(Point2D point1, Point2D multi)
         {
             return new Point2D { x = point1.x * multi.x, y = point1.y * multi.y };
+        }
+
+        public static Point2D operator *(Point2D point1, double k)
+        {
+            return new Point2D(point1.x * k, point1.y * k);
+        }
+
+        public static Point2D operator /(Point2D point1, double k)
+        {
+            return new Point2D(point1.x / k, point1.y / k);
         }
 
         public Point2D Add(Point2D p2)
@@ -114,6 +126,11 @@ namespace TETCSharpClient.Data
         public double Average()
         {
             return (x + y) / 2;
+        }
+
+        public override String ToString()
+        {
+            return "{" + x + ", " + y + "}";
         }
     }
 }

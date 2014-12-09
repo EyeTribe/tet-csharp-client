@@ -46,14 +46,27 @@ The complete API specification used by the C# SDK to communicate with the server
 
 Changelog
 ----
+0.9.49 (2014-12-09)
+
+- Ensured callback order of listener types during activation 
+- Ensured thread safety in singletons
+- Refactored internal blocking queues
+- More consistent console output on errors
+- Unified constructors and operators for all data types
+- Added utility methods to GazeData class
+- Updated Json.NET to 6.0.6
+
 0.9.36 (2014-07-17)
+
 - Fixed bug, causing offset in GazeData timestamp
 - Added method GetTimeDeltaNow() to GazeUtils
 
 0.9.35 (2014-05-20)
+
 - Updated license
 
 0.9.34 (2014-05-09)
+
 - Updated project setting to MS Visual Studio 2013
 - Improved multithreading and stability in network layer
 - Fixed bug related to initialization lock
@@ -61,6 +74,7 @@ Changelog
 - Fixed bug related to broadcasting calibration updates
 
 0.9.33 (2014-04-15)
+
 - Thread safe GazeManager activation/deactivation
 - Added support for listening to EyeTribe Server conneciton state (IConnectionStateListener)
 - Minor API timestamp change
@@ -69,11 +83,13 @@ Changelog
 - Generel bug fixing and optimization
 
 0.9.27 (2014-02-12)
+
 - Fixed tab/space formatting
 - New methods to GazeUtils
 - Minor internal refactoring
 
 0.9.26 (2014-01-30)
+
 - Redesign and refactoring of main SDK interface GazeManager to support new TET API features
 - Added support for listening for EyeTribe Tracker states (ITrackerStateListener & TrackerState)
 - Added support for listening for changes in calibration state (ICalibrationResultListener)
@@ -83,6 +99,7 @@ Changelog
 - Added documentation
 
 0.9.21 (2013-01-08)
+
 - Initial release
 
 
