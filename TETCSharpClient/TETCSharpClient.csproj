@@ -39,6 +39,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections.cs" />
     <Compile Include="Data\Point3D.cs" />
     <Compile Include="Data\Accuracy.cs" />
     <Compile Include="Data\Eye.cs" />

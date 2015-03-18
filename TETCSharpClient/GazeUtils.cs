@@ -25,7 +25,7 @@ namespace TETCSharpClient
         /// <param name="leftEye"></param>
         /// <param name="rightEye"></param>
         /// <returns>the average center point in normalized values</returns>
-        public static Point2D getEyesCenterNormalized(Eye leftEye, Eye rightEye)
+        public static Point2D GetEyesCenterNormalized(Eye leftEye, Eye rightEye)
         {
             Point2D eyeCenter = new Point2D();
 
@@ -53,10 +53,10 @@ namespace TETCSharpClient
         /// </summary>
         /// <param name="gazeData">gaze data frame to base calculation upon</param>
         /// <returns>the average center point in normalized values</returns>
-        public static Point2D getEyesCenterNormalized(GazeData gazeData)
+        public static Point2D GetEyesCenterNormalized(GazeData gazeData)
         {
             if (null != gazeData)
-                return getEyesCenterNormalized(gazeData.LeftEye, gazeData.RightEye);
+                return GetEyesCenterNormalized(gazeData.LeftEye, gazeData.RightEye);
             else
                 return null;
         }
@@ -69,11 +69,11 @@ namespace TETCSharpClient
         /// <param name="screenWidth"></param>
         /// <param name="screenHeight"></param>
         /// <returns>the average center point in pixels</returns>
-        public static Point2D getEyesCenterPixels(Eye leftEye, Eye rightEye, int screenWidth, int screenHeight)
+        public static Point2D GetEyesCenterPixels(Eye leftEye, Eye rightEye, int screenWidth, int screenHeight)
         {
-            Point2D center = getEyesCenterNormalized(leftEye, rightEye);
+            Point2D center = GetEyesCenterNormalized(leftEye, rightEye);
 
-            return getRelativeToScreenSpace(center, screenWidth, screenHeight);
+            return GetRelativeToScreenSpace(center, screenWidth, screenHeight);
         }
 
         /// <summary>
@@ -83,10 +83,10 @@ namespace TETCSharpClient
         /// <param name="screenWidth"></param>
         /// <param name="screenHeight"></param>
         /// <returns>the average center point in pixels</returns>
-        public static Point2D getEyesCenterPixels(GazeData gazeData, int screenWidth, int screenHeight)
+        public static Point2D GetEyesCenterPixels(GazeData gazeData, int screenWidth, int screenHeight)
         {
             if (null != gazeData)
-                return getEyesCenterPixels(gazeData.LeftEye, gazeData.RightEye, screenWidth, screenHeight);
+                return GetEyesCenterPixels(gazeData.LeftEye, gazeData.RightEye, screenWidth, screenHeight);
             else
                 return null;
         }
@@ -101,9 +101,9 @@ namespace TETCSharpClient
         /// <param name="leftEye"></param>
         /// <param name="rightEye"></param>
         /// <returns>a normalized value [0..1]</returns>
-        public static double getEyesDistanceNormalized(Eye leftEye, Eye rightEye)
+        public static double GetEyesDistanceNormalized(Eye leftEye, Eye rightEye)
         {
-            double dist = Math.Abs(getDistancePoint2D(leftEye.PupilCenterCoordinates, rightEye.PupilCenterCoordinates));
+            double dist = Math.Abs(GetDistancePoint2D(leftEye.PupilCenterCoordinates, rightEye.PupilCenterCoordinates));
 
             if (dist < _MinimumEyesDistance)
                 _MinimumEyesDistance = dist;
@@ -121,15 +121,15 @@ namespace TETCSharpClient
         /// </summary>
         /// <param name="gazeData">gaze data frame to base calculation upon</param>
         /// <returns>a normalized value [0..1]</returns>
-        public static double getEyesDistanceNormalized(GazeData gazeData)
+        public static double GetEyesDistanceNormalized(GazeData gazeData)
         {
-            return getEyesDistanceNormalized(gazeData.LeftEye, gazeData.RightEye);
+            return GetEyesDistanceNormalized(gazeData.LeftEye, gazeData.RightEye);
         }
 
         /// <summary>
         /// Calculates distance between two points.
         /// </summary>
-        public static double getDistancePoint2D(Point2D a, Point2D b)
+        public static double GetDistancePoint2D(Point2D a, Point2D b)
         {
             return Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
         }
@@ -137,7 +137,7 @@ namespace TETCSharpClient
         /// <summary>
         /// Converts a relative point to screen point in pixels
         /// </summary>
-        public static Point2D getRelativeToScreenSpace(Point2D point, int screenWidth, int screenHeight)
+        public static Point2D GetRelativeToScreenSpace(Point2D point, int screenWidth, int screenHeight)
         {
             Point2D screenPoint = null;
 
@@ -158,7 +158,7 @@ namespace TETCSharpClient
         /// <param name="screenWidth">the width value to base normalization upon</param>
         /// <param name="screenHeight">the height value to base normalization upon</param>
         /// <returns>normalized 2d point</returns> 
-        public static Point2D getNormalizedCoords(Point2D point, int screenWidth, int screenHeight)
+        public static Point2D GetNormalizedCoords(Point2D point, int screenWidth, int screenHeight)
         {
             Point2D norm = null;
 
@@ -179,9 +179,9 @@ namespace TETCSharpClient
         /// <param name="screenWidth">the width value to base normalization upon</param>
         /// <param name="screenHeight">the height value to base normalization upon</param>
         /// <returns>normalized 2d point</returns> 
-        public static Point2D getNormalizedMapping(Point2D point, int screenWidth, int screenHeight)
+        public static Point2D GetNormalizedMapping(Point2D point, int screenWidth, int screenHeight)
         {
-            Point2D normMap = getNormalizedCoords(point, screenWidth, screenHeight);
+            Point2D normMap = GetNormalizedCoords(point, screenWidth, screenHeight);
 
             if (null != normMap)
             {
@@ -202,7 +202,7 @@ namespace TETCSharpClient
         /// <returns>time difference in milliseconds</returns> 
         public static long GetTimeDeltaNow(GazeData gazeData)
         {
-            return (long)Math.Round( ((double)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - gazeData.TimeStamp);
+            return (long)Math.Round(((double)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - gazeData.TimeStamp);
         }
     }
 }

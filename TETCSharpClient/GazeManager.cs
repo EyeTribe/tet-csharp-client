@@ -34,8 +34,6 @@ namespace TETCSharpClient
 
         public const int INIT_TIME_DELAY_SECONDS = 10;
 
-        public const string TIMESTAMP_STRING_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
-
         #endregion
 
         #region Enums
@@ -96,10 +94,10 @@ namespace TETCSharpClient
         protected int sampledCalibrationPoints;
         protected int totalCalibrationPoints;
 
-        protected List<IGazeListener> gazeListeners;
-        protected List<ICalibrationResultListener> calibrationResultListeners;
-        protected List<ITrackerStateListener> trackerStateListeners;
-        protected List<IConnectionStateListener> connectionStateListeners;
+        internal SynchronizedList<IGazeListener> gazeListeners;
+        internal SynchronizedList<ICalibrationResultListener> calibrationResultListeners;
+        internal SynchronizedList<ITrackerStateListener> trackerStateListeners;
+        internal SynchronizedList<IConnectionStateListener> connectionStateListeners;
         protected ICalibrationProcessHandler calibrationListener;
 
         #endregion
@@ -109,10 +107,10 @@ namespace TETCSharpClient
         private GazeManager()
         {
             HeartbeatMillis = 3000; //default value
-            gazeListeners = new List<IGazeListener>();
-            calibrationResultListeners = new List<ICalibrationResultListener>();
-            trackerStateListeners = new List<ITrackerStateListener>();
-            connectionStateListeners = new List<IConnectionStateListener>();
+            gazeListeners = new SynchronizedList<IGazeListener>();
+            calibrationResultListeners = new SynchronizedList<ICalibrationResultListener>();
+            trackerStateListeners = new SynchronizedList<ITrackerStateListener>();
+            connectionStateListeners = new SynchronizedList<IConnectionStateListener>();
             gazeQueue = new SingleFrameBlockingQueue<GazeData>();
         }
 
@@ -152,70 +150,122 @@ namespace TETCSharpClient
         /// <summary>
         /// The current state of the connected TrackerDevice.
         /// </summary>
-        public TrackerState Trackerstate { get; private set; }
+        public TrackerState Trackerstate
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// The lastest performed and valid CalibrationResult. Note the result is not nessesarily positive
         /// and clients should evaluate the result before using. 
         /// </summary>
-        public CalibrationResult LastCalibrationResult { get; private set; }
+        public CalibrationResult LastCalibrationResult
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Is the client in the middle of a calibration process?
         /// </summary>
-        public Boolean IsCalibrating { get; private set; }
+        public Boolean IsCalibrating
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Is the client already calibrated?
         /// </summary>
-        public Boolean IsCalibrated { get; private set; }
+        public Boolean IsCalibrated
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Index of currently used screen. Used for multiscreen setups.
         /// </summary>
-        public int ScreenIndex { get; private set; }
+        public int ScreenIndex
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Width of screen resolution in pixels
         /// </summary>
-        public int ScreenResolutionWidth { get; private set; }
+        public int ScreenResolutionWidth
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Height of screen resolution in pixels
         /// </summary>
-        public int ScreenResolutionHeight { get; private set; }
+        public int ScreenResolutionHeight
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Physical width of screen in meters
         /// </summary>
-        public float ScreenPhysicalWidth { get; private set; }
+        public float ScreenPhysicalWidth
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Physical height of screen in meters
         /// </summary>
-        public float ScreenPhysicalHeight { get; private set; }
+        public float ScreenPhysicalHeight
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Length of a heartbeat in milliseconds. 
         /// The Tracker Server defines the desired length of a heartbeat and is in
         /// this implementation automatically acquired through the Tracker API.
         /// </summary>
-        internal int HeartbeatMillis { get; private set; }
+        internal int HeartbeatMillis
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Number of frames per second delivered by Tracker Server
         /// </summary>
-        public FrameRate Framerate { get; private set; }
+        public FrameRate Framerate
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Current API version compliance of Tracker Server
         /// </summary>
-        protected ApiVersion version { get; private set; }
+        protected ApiVersion version
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// Current running mode of this client
         /// </summary>
-        protected ClientMode clientMode { get; private set; }
+        protected ClientMode clientMode
+        {
+            get;
+            private set;
+        }
 
         #endregion
 
@@ -277,12 +327,9 @@ namespace TETCSharpClient
                                         {
                                             Trackerstate = (TrackerState)(int)value;
 
-                                            lock (((ICollection)trackerStateListeners).SyncRoot)
+                                            foreach (ITrackerStateListener listener in trackerStateListeners)
                                             {
-                                                foreach (ITrackerStateListener listener in trackerStateListeners)
-                                                {
-                                                    ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnTrackerStateChanged), new Object[] { listener, Trackerstate });
-                                                }
+                                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnTrackerStateChanged), new Object[] { listener, Trackerstate });
                                             }
                                         }
                                     }
@@ -300,12 +347,9 @@ namespace TETCSharpClient
                                         {
                                             LastCalibrationResult = value.ToObject<CalibrationResult>();
 
-                                            lock (((ICollection)calibrationResultListeners).SyncRoot)
+                                            foreach (ICalibrationResultListener listener in calibrationResultListeners)
                                             {
-                                                foreach (ICalibrationResultListener listener in calibrationResultListeners)
-                                                {
-                                                    ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationChanged), new Object[] { listener, IsCalibrated, LastCalibrationResult });
-                                                }
+                                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationChanged), new Object[] { listener, IsCalibrated, LastCalibrationResult });
                                             }
                                         }
                                     }
@@ -329,12 +373,9 @@ namespace TETCSharpClient
                                         {
                                             ScreenIndex = (int)value;
 
-                                            lock (((ICollection)trackerStateListeners).SyncRoot)
+                                            foreach (ITrackerStateListener listener in trackerStateListeners)
                                             {
-                                                foreach (ITrackerStateListener listener in trackerStateListeners)
-                                                {
-                                                    ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnScreenStatesChanged), new Object[] { listener, ScreenIndex, ScreenResolutionWidth, ScreenResolutionHeight, ScreenPhysicalWidth, ScreenPhysicalHeight });
-                                                }
+                                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnScreenStatesChanged), new Object[] { listener, ScreenIndex, ScreenResolutionWidth, ScreenResolutionHeight, ScreenPhysicalWidth, ScreenPhysicalHeight });
                                             }
                                         }
                                     }
@@ -348,7 +389,7 @@ namespace TETCSharpClient
                                         {
                                             try
                                             {
-                                                DateTime gdTime = DateTime.ParseExact(gd.TimeStampString, TIMESTAMP_STRING_FORMAT,
+                                                DateTime gdTime = DateTime.ParseExact(gd.TimeStampString, GazeData.TIMESTAMP_STRING_FORMAT,
                                                     System.Globalization.CultureInfo.InvariantCulture);
                                                 gd.TimeStamp = (long)((double)gdTime.Ticks / TimeSpan.TicksPerMillisecond);
                                             }
@@ -366,10 +407,14 @@ namespace TETCSharpClient
                                 //Handle initialization
                                 if (isInizializing)
                                 {
-                                    lock (initializationLock)
+                                    //we make sure response is inital get request and not a 'push mode' frame
+                                    if (!values.TryGetValue(Protocol.TRACKER_FRAME, out value))
                                     {
-                                        isInizializing = false;
-                                        Monitor.Pulse(initializationLock);
+                                        lock (initializationLock)
+                                        {
+                                            isInizializing = false;
+                                            Monitor.Pulse(initializationLock);
+                                        }
                                     }
                                 }
                             }
@@ -440,23 +485,24 @@ namespace TETCSharpClient
                                     IsCalibrated = cper.Values.CalibrationResult.Result;
                                     IsCalibrating = !cper.Values.CalibrationResult.Result;
 
-                                    //Notify calibration result listeners if calibration changed
+                                    // Evaluate resample points
+                                    sampledCalibrationPoints -= cper.Values.CalibrationResult.Calibpoints.Where(cp => cp.State == CalibrationPoint.STATE_RESAMPLE || cp.State == CalibrationPoint.STATE_NO_DATA).Count();
+
+
+                                    // Notify calibration result listeners if calibration changed
                                     if (IsCalibrated && (null == LastCalibrationResult || !LastCalibrationResult.Equals(cper.Values.CalibrationResult)))
                                     {
                                         LastCalibrationResult = cper.Values.CalibrationResult;
 
-                                        lock (((ICollection)calibrationResultListeners).SyncRoot)
+                                        foreach (ICalibrationResultListener listener in calibrationResultListeners)
                                         {
-                                            foreach (ICalibrationResultListener listener in calibrationResultListeners)
-                                            {
-                                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationChanged), new Object[] { listener, IsCalibrated, LastCalibrationResult });
-                                            }
+                                            ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationChanged), new Object[] { listener, IsCalibrated, LastCalibrationResult });
                                         }
                                     }
 
                                     if (null != calibrationListener)
                                     {
-                                        //Notify calibration listener that calibration results are ready for evaluation
+                                        // Notify calibration listener that calibration results are ready for evaluation
                                         try
                                         {
                                             calibrationListener.OnCalibrationResult(cper.Values.CalibrationResult);
@@ -608,12 +654,9 @@ namespace TETCSharpClient
         {
             if (!isInizializing)
             {
-                lock (((ICollection)connectionStateListeners).SyncRoot)
+                foreach (IConnectionStateListener listener in connectionStateListeners)
                 {
-                    foreach (IConnectionStateListener listener in connectionStateListeners)
-                    {
-                        ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnConnectionStateChanged), new Object[] { listener, isConnected });
-                    }
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnConnectionStateChanged), new Object[] { listener, isConnected });
                 }
             }
         }
@@ -695,7 +738,7 @@ namespace TETCSharpClient
         public bool Activate(ApiVersion apiVersion, ClientMode mode, string hostname, int portnumber)
         {
             //lock to ensure that state changing method calls are synchronous
-            lock (Holder.INSTANCE)
+            lock (Instance)
             {
                 Object threadLock = Thread.CurrentThread;
 
@@ -709,29 +752,38 @@ namespace TETCSharpClient
                         {
                             isInizializing = true;
 
-                            //establish connection in seperate thread
-                            apiManager = new GazeApiManager(this, this);
-                            ThreadPool.SetMaxThreads(Environment.ProcessorCount, Environment.ProcessorCount);
-                            ThreadPool.QueueUserWorkItem(new WaitCallback(HandleServerConnect), new Object[] { apiManager, mode, apiVersion, hostname, portnumber });
-
-                            //We wait untill above requests have been handled by server or timeout occurs
-                            bool waitSuccess = Monitor.Wait(initializationLock, TimeSpan.FromSeconds(INIT_TIME_DELAY_SECONDS));
-
-                            if (!waitSuccess)
+                            try
                             {
-                                Deactivate();
-                                Console.Write("Error initializing GazeManager, is EyeTribe Server running?");
+                                //establish connection in seperate thread
+                                apiManager = new GazeApiManager(this, this);
+                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleServerConnect), new Object[] { apiManager, mode, apiVersion, hostname, portnumber });
+
+                                //We wait untill above requests have been handled by server or timeout occurs
+                                bool waitSuccess = Monitor.Wait(initializationLock, TimeSpan.FromSeconds(INIT_TIME_DELAY_SECONDS));
+
+                                if (!waitSuccess)
+                                {
+                                    HandleInitFailure();
+
+                                    Console.Write("Error initializing GazeManager, is EyeTribe Server running?");
+                                }
+                                else
+                                {
+                                    //init heartbeat
+                                    heartbeatHandler = new Heartbeat(apiManager);
+                                    heartbeatHandler.Start();
+
+                                    isActive = true;
+
+                                    //notify connection listeners
+                                    OnGazeApiConnectionStateChanged(IsActivated);
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
-                                //init heartbeat
-                                heartbeatHandler = new Heartbeat(apiManager);
-                                heartbeatHandler.Start();
+                                HandleInitFailure();
 
-                                isActive = true;
-
-                                //notify connection listeners
-                                OnGazeApiConnectionStateChanged(IsActivated);
+                                Console.Write("Error initializing GazeManager: " + e.StackTrace);
                             }
                         }
 
@@ -769,6 +821,24 @@ namespace TETCSharpClient
             }
         }
 
+        internal void HandleInitFailure()
+        {
+            lock (Instance)
+            {
+                if (null != heartbeatHandler)
+                {
+                    heartbeatHandler.Stop();
+                    heartbeatHandler = null;
+                }
+
+                if (null != apiManager)
+                {
+                    apiManager.Close();
+                    apiManager = null;
+                }
+            }
+        }
+
         /// <summary>
         /// Deactivates TET C# Client and all under lying routines. Should be called when
         /// a application closes down.
@@ -776,7 +846,7 @@ namespace TETCSharpClient
         public void Deactivate()
         {
             //lock to ensure that state changing method calls are synchronous
-            lock (Holder.INSTANCE)
+            lock (Instance)
             {
                 if (null != heartbeatHandler)
                 {
@@ -817,12 +887,11 @@ namespace TETCSharpClient
         {
             if (null != listener)
             {
-                lock (((ICollection)gazeListeners).SyncRoot)
+                lock (gazeListeners)
                 {
                     if (gazeListeners.Count == 0)
                     {
                         //init broadcasting routines
-                        gazeQueue.Start();
                         gazeBroadcaster = new GazeBroadcaster(gazeQueue, gazeListeners);
                         gazeBroadcaster.Start();
                     }
@@ -844,7 +913,7 @@ namespace TETCSharpClient
 
             if (null != listener)
             {
-                lock (((ICollection)gazeListeners).SyncRoot)
+                lock (gazeListeners)
                 {
                     if (gazeListeners.Contains(listener))
                         result = gazeListeners.Remove(listener);
@@ -856,8 +925,6 @@ namespace TETCSharpClient
                             gazeBroadcaster.Stop();
                             gazeBroadcaster = null;
                         }
-
-                        gazeQueue.Stop();
                     }
                 }
             }
@@ -871,10 +938,7 @@ namespace TETCSharpClient
         /// <returns>Curent number of listeners</returns>
         public int GetNumGazeListeners()
         {
-            lock (((ICollection)gazeListeners).SyncRoot)
-            {
-                return gazeListeners.Count;
-            }
+            return gazeListeners.Count;
         }
 
         /// <summary>
@@ -887,10 +951,7 @@ namespace TETCSharpClient
 
             if (null != listener)
             {
-                lock (((ICollection)gazeListeners).SyncRoot)
-                {
-                    result = gazeListeners.Contains(listener);
-                }
+                result = gazeListeners.Contains(listener);
             }
 
             return result;
@@ -905,11 +966,8 @@ namespace TETCSharpClient
         {
             if (null != listener)
             {
-                lock (((ICollection)calibrationResultListeners).SyncRoot)
-                {
-                    if (!calibrationResultListeners.Contains(listener))
-                        calibrationResultListeners.Add(listener);
-                }
+                if (!calibrationResultListeners.Contains(listener))
+                    calibrationResultListeners.Add(listener);
             }
         }
 
@@ -924,11 +982,8 @@ namespace TETCSharpClient
 
             if (null != listener)
             {
-                lock (((ICollection)calibrationResultListeners).SyncRoot)
-                {
-                    if (calibrationResultListeners.Contains(listener))
-                        result = calibrationResultListeners.Remove(listener);
-                }
+                if (calibrationResultListeners.Contains(listener))
+                    result = calibrationResultListeners.Remove(listener);
             }
 
             return result;
@@ -940,10 +995,7 @@ namespace TETCSharpClient
         /// <returns>Curent number of listeners</returns>
         public int GetNumCalibrationResultListeners()
         {
-            lock (((ICollection)calibrationResultListeners).SyncRoot)
-            {
-                return calibrationResultListeners.Count;
-            }
+            return calibrationResultListeners.Count;
         }
 
         /// <summary>
@@ -956,10 +1008,7 @@ namespace TETCSharpClient
 
             if (null != listener)
             {
-                lock (((ICollection)calibrationResultListeners).SyncRoot)
-                {
-                    result = calibrationResultListeners.Contains(listener);
-                }
+                result = calibrationResultListeners.Contains(listener);
             }
 
             return result;
@@ -974,11 +1023,8 @@ namespace TETCSharpClient
         {
             if (null != listener)
             {
-                lock (((ICollection)trackerStateListeners).SyncRoot)
-                {
-                    if (!trackerStateListeners.Contains(listener))
-                        trackerStateListeners.Add(listener);
-                }
+                if (!trackerStateListeners.Contains(listener))
+                    trackerStateListeners.Add(listener);
             }
         }
 
@@ -993,11 +1039,8 @@ namespace TETCSharpClient
 
             if (null != listener)
             {
-                lock (((ICollection)trackerStateListeners).SyncRoot)
-                {
-                    if (trackerStateListeners.Contains(listener))
-                        result = trackerStateListeners.Remove(listener);
-                }
+                if (trackerStateListeners.Contains(listener))
+                    result = trackerStateListeners.Remove(listener);
             }
 
             return result;
@@ -1009,10 +1052,7 @@ namespace TETCSharpClient
         /// <returns>Curent number of listeners</returns>
         public int GetNumTrackerStateListeners()
         {
-            lock (((ICollection)trackerStateListeners).SyncRoot)
-            {
-                return trackerStateListeners.Count;
-            }
+            return trackerStateListeners.Count;
         }
 
         /// <summary>
@@ -1025,10 +1065,7 @@ namespace TETCSharpClient
 
             if (null != listener)
             {
-                lock (((ICollection)trackerStateListeners).SyncRoot)
-                {
-                    result = trackerStateListeners.Contains(listener);
-                }
+                result = trackerStateListeners.Contains(listener);
             }
 
             return result;
@@ -1043,11 +1080,8 @@ namespace TETCSharpClient
         {
             if (null != listener)
             {
-                lock (((ICollection)connectionStateListeners).SyncRoot)
-                {
-                    if (!connectionStateListeners.Contains(listener))
-                        connectionStateListeners.Add(listener);
-                }
+                if (!connectionStateListeners.Contains(listener))
+                    connectionStateListeners.Add(listener);
             }
         }
 
@@ -1062,11 +1096,8 @@ namespace TETCSharpClient
 
             if (null != listener)
             {
-                lock (((ICollection)connectionStateListeners).SyncRoot)
-                {
-                    if (connectionStateListeners.Contains(listener))
-                        result = connectionStateListeners.Remove(listener);
-                }
+                if (connectionStateListeners.Contains(listener))
+                    result = connectionStateListeners.Remove(listener);
             }
 
             return result;
@@ -1078,10 +1109,7 @@ namespace TETCSharpClient
         /// <returns>Curent number of listeners</returns>
         public int GetNumConnectionStateListeners()
         {
-            lock (((ICollection)connectionStateListeners).SyncRoot)
-            {
-                return connectionStateListeners.Count;
-            }
+            return connectionStateListeners.Count;
         }
 
         /// <summary>
@@ -1094,10 +1122,7 @@ namespace TETCSharpClient
 
             if (null != listener)
             {
-                lock (((ICollection)connectionStateListeners).SyncRoot)
-                {
-                    result = connectionStateListeners.Contains(listener);
-                }
+                result = connectionStateListeners.Contains(listener);
             }
 
             return result;
@@ -1109,31 +1134,16 @@ namespace TETCSharpClient
         public void ClearListeners()
         {
             if (null != gazeListeners)
-                lock (((ICollection)gazeListeners).SyncRoot)
-                {
-                    gazeListeners.Clear();
-                }
+                gazeListeners.Clear();
 
             if (null != calibrationResultListeners)
-                lock (((ICollection)calibrationResultListeners).SyncRoot)
-                {
-                    calibrationResultListeners.Clear();
-                }
+                calibrationResultListeners.Clear();
 
             if (null != trackerStateListeners)
-                lock (((ICollection)trackerStateListeners).SyncRoot)
-                {
-                    trackerStateListeners.Clear();
-                }
+                trackerStateListeners.Clear();
 
             if (null != connectionStateListeners)
-                lock (((ICollection)connectionStateListeners).SyncRoot)
-                {
-                    connectionStateListeners.Clear();
-                }
-
-            if (null != gazeQueue)
-                gazeQueue.Stop();
+                connectionStateListeners.Clear();
 
             if (null != gazeBroadcaster)
             {

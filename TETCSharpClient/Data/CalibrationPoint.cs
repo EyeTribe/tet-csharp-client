@@ -90,5 +90,17 @@ namespace TETCSharpClient.Data
                 MeanError.Equals(other.MeanError) &&
                 StandardDeviation.Equals(other.StandardDeviation);
         }
+
+        public override int GetHashCode()
+        {
+            int hash = 157;
+            hash = hash * 953 + State.GetHashCode();
+            hash = hash * 953 + Coordinates.GetHashCode();
+            hash = hash * 953 + MeanEstimatedCoords.GetHashCode();
+            hash = hash * 953 + Accuracy.GetHashCode();
+            hash = hash * 953 + MeanError.GetHashCode();
+            hash = hash * 953 + StandardDeviation.GetHashCode();
+            return hash;
+        }
     }
 }

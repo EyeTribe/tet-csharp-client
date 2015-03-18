@@ -55,6 +55,13 @@ namespace TETCSharpClient.Data
             return base.Equals(o) && Double.Equals(z, other.z);
         }
 
+        public override int GetHashCode()
+        {
+            int hash = base.GetHashCode();
+            hash = hash * 2777 + Z.GetHashCode();
+            return hash;
+        }
+
         public static Point3D operator +(Point3D point1, Point3D point2)
         {
             return new Point3D { x = point1.x + point2.x, y = point1.y + point2.y, z = point1.z + point2.z };

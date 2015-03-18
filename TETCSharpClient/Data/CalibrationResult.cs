@@ -66,11 +66,6 @@ namespace TETCSharpClient.Data
             Calibpoints = (CalibrationPoint[])other.Calibpoints.Clone();
         }
 
-        public CalibrationResult(String json)
-        {
-            Set(JsonConvert.DeserializeObject<CalibrationResult>(json));
-        }
-
         private void Set(CalibrationResult other)
         {
             Result = other.Result;
@@ -78,11 +73,6 @@ namespace TETCSharpClient.Data
             AverageErrorDegreeLeft = other.AverageErrorDegreeLeft;
             AverageErrorDegreeRight = other.AverageErrorDegreeRight;
             Calibpoints = other.Calibpoints;
-        }
-
-        public String ToJson()
-        {
-            return JsonConvert.SerializeObject(this);
         }
 
         public override bool Equals(Object o)
@@ -101,6 +91,22 @@ namespace TETCSharpClient.Data
                 Double.Equals(this.AverageErrorDegreeLeft, other.AverageErrorDegreeLeft) &&
                 Double.Equals(this.AverageErrorDegreeRight, other.AverageErrorDegreeRight) &&
                 ArraysEqual(this.Calibpoints, other.Calibpoints);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 347;
+            hash = hash * 199 + Result.GetHashCode();
+            hash = hash * 199 + AverageErrorDegree.GetHashCode();
+            hash = hash * 199 + AverageErrorDegreeLeft.GetHashCode();
+            hash = hash * 199 + AverageErrorDegreeRight.GetHashCode();
+
+            int hc = Calibpoints.Length;
+            foreach (CalibrationPoint cp in Calibpoints)
+                hc = hc * 199 + cp.GetHashCode();
+            hash += hc;
+
+            return hash;
         }
 
         private bool ArraysEqual<T>(T[] a1, T[] a2)

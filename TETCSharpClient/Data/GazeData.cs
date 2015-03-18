@@ -17,6 +17,12 @@ namespace TETCSharpClient.Data
     /// </summary>
     public class GazeData
     {
+        #region Constants
+
+        public const string TIMESTAMP_STRING_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -98,7 +104,9 @@ namespace TETCSharpClient.Data
 
         public GazeData()
         {
-            TimeStamp = (long)Math.Round(DateTime.Now.TimeOfDay.TotalMilliseconds);
+            DateTime now = DateTime.Now;
+            TimeStamp = (long)((double)now.Ticks / TimeSpan.TicksPerMillisecond);
+            TimeStampString = now.ToString(TIMESTAMP_STRING_FORMAT);
             IsFixated = false;
             RawCoordinates = new Point2D();
             SmoothedCoordinates = new Point2D();
@@ -113,6 +121,7 @@ namespace TETCSharpClient.Data
             {
                 State = other.State;
                 TimeStamp = other.TimeStamp;
+                TimeStampString = other.TimeStampString;
 
                 RawCoordinates = new Point2D(other.RawCoordinates);
                 SmoothedCoordinates = new Point2D(other.SmoothedCoordinates);
@@ -122,11 +131,6 @@ namespace TETCSharpClient.Data
 
                 IsFixated = other.IsFixated;
             }
-        }
-
-        public GazeData(String json)
-        {
-            Set(JsonConvert.DeserializeObject<GazeData>(json));
         }
 
         #endregion
@@ -145,17 +149,27 @@ namespace TETCSharpClient.Data
 
             return
                 State == other.State &&
-                TimeStamp == other.TimeStamp &&
                 RawCoordinates.Equals(other.RawCoordinates) &&
                 SmoothedCoordinates.Equals(other.SmoothedCoordinates) &&
                 LeftEye.Equals(other.LeftEye) &&
                 RightEye.Equals(other.RightEye) &&
+                TimeStamp == other.TimeStamp &&
+                TimeStampString.Equals(TimeStampString) &&
                 IsFixated == other.IsFixated;
         }
 
-        public String ToJson()
+        public override int GetHashCode()
         {
-            return JsonConvert.SerializeObject(this);
+            int hash = 2039;
+            hash = hash * 1553 + State.GetHashCode();
+            hash = hash * 1553 + RawCoordinates.GetHashCode();
+            hash = hash * 1553 + SmoothedCoordinates.GetHashCode();
+            hash = hash * 1553 + LeftEye.GetHashCode();
+            hash = hash * 1553 + RightEye.GetHashCode();
+            hash = hash * 1553 + TimeStamp.GetHashCode();
+            hash = hash * 1553 + TimeStampString.GetHashCode();
+            hash = hash * 1553 + IsFixated.GetHashCode();
+            return hash;
         }
 
         public String StateToString()
@@ -203,7 +217,7 @@ namespace TETCSharpClient.Data
             return (State & NO_TRACKING_MASK) == 0 && SmoothedCoordinates.X != 0 && SmoothedCoordinates.Y != 0;
         }
 
-        public Boolean hasRawGazeCoordinates()
+        public Boolean HasRawGazeCoordinates()
         {
             return (State & NO_TRACKING_MASK) == 0 && RawCoordinates.X != 0 && RawCoordinates.Y != 0;
         }
@@ -216,6 +230,7 @@ namespace TETCSharpClient.Data
         {
             State = other.State;
             TimeStamp = other.TimeStamp;
+            TimeStampString = other.TimeStampString;
 
             RawCoordinates = new Point2D(other.RawCoordinates);
             SmoothedCoordinates = new Point2D(other.SmoothedCoordinates);

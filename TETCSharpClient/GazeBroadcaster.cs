@@ -21,12 +21,12 @@ namespace TETCSharpClient
     /// </summary>
     internal class GazeBroadcaster
     {
-        private readonly List<IGazeListener> gazeListeners;
+        private readonly SynchronizedList<IGazeListener> gazeListeners;
         private readonly SingleFrameBlockingQueue<GazeData> blockingGazeQueue;
         private bool isRunning;
         private Thread workerThread;
 
-        public GazeBroadcaster(SingleFrameBlockingQueue<GazeData> queue, List<IGazeListener> gazeListeners)
+        public GazeBroadcaster(SingleFrameBlockingQueue<GazeData> queue, SynchronizedList<IGazeListener> gazeListeners)
         {
             this.gazeListeners = gazeListeners;
             this.blockingGazeQueue = queue;
@@ -40,6 +40,8 @@ namespace TETCSharpClient
                 var ts = new ThreadStart(Work);
                 workerThread = new Thread(ts);
                 workerThread.Name = "GazeCallback";
+
+                blockingGazeQueue.Start();
                 workerThread.Start();
             }
         }
@@ -49,10 +51,7 @@ namespace TETCSharpClient
             lock (this)
             {
                 isRunning = false;
-                lock (blockingGazeQueue)
-                {
-                    Monitor.PulseAll(blockingGazeQueue);
-                }
+                blockingGazeQueue.Stop();
             }
         }
 
@@ -71,15 +70,7 @@ namespace TETCSharpClient
                         {
                             foreach (IGazeListener listener in gazeListeners)
                             {
-                                try
-                                {
-                                     listener.OnGazeUpdate(gaze);
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.Write("Exception while calling IGazeListener.onGazeUpdate() " +
-                                            "on listener " + listener + ": " + e.Message);
-                                }
+                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnGazeUpdate), new Object[] { listener, gaze });
                             }
                         }
                     }
@@ -94,60 +85,20 @@ namespace TETCSharpClient
                 Debug.WriteLine("Broadcaster closing down");
             }
         }
-    }
 
-    internal class SingleFrameBlockingQueue<T>
-    {
-        private readonly Queue<T> queue = new Queue<T>();
-        private bool isStopped;
-        public SingleFrameBlockingQueue() { }
-
-        public int Count { get { lock (queue) { return null != queue ? queue.Count : 0; } } }
-
-        public void Put(T item)
+        internal static void HandleOnGazeUpdate(Object stateInfo)
         {
-            lock (queue)
+            IGazeListener listener = null;
+            try
             {
-                if (isStopped)
-                    return;
-                while (queue.Count > 0)
-                    queue.Dequeue();
-                queue.Enqueue(item);
-                if (queue.Count == 1)
-                    Monitor.PulseAll(queue);
+                Object[] objs = (Object[])stateInfo;
+                listener = (IGazeListener)objs[0];
+                GazeData gaze = (GazeData)objs[1];
+                listener.OnGazeUpdate(gaze);
             }
-        }
-
-        public T Take()
-        {
-            lock (queue)
+            catch (Exception e)
             {
-                if (isStopped)
-                    return default(T);
-                if (queue.Count == 0)
-                    Monitor.Wait(queue);
-                if (isStopped)
-                    return default(T);
-                else
-                    return queue.Dequeue();
-            }
-        }
-
-        public void Stop()
-        {
-            lock (queue)
-            {
-                queue.Clear();
-                isStopped = true;
-                Monitor.PulseAll(queue);
-            }
-        }
-
-        public void Start()
-        {
-            lock (queue)
-            {
-                isStopped = false;
+                Debug.WriteLine("Exception while calling IGazeListener.OnGazeUpdate() on listener " + listener + ": " + e.Message);
             }
         }
     }

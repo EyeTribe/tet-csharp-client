@@ -45,5 +45,14 @@ namespace TETCSharpClient.Data
                 Double.Equals(Left, other.Left) &&
                 Double.Equals(Right, other.Right);
         }
+
+        public override int GetHashCode()
+        {
+            int hash = 7;
+            hash = hash * 29 + Average.GetHashCode();
+            hash = hash * 29 + Left.GetHashCode();
+            hash = hash * 29 + Right.GetHashCode();
+            return hash;
+        }
     }
 }

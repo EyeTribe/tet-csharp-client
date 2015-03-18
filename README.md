@@ -1,30 +1,36 @@
-C# SDK for The Eye Tribe Tracker
+C# SDK for the EyeTribe Dev Kit
 ====
 <p>
 
 Introduction
 ----
 
-This is the C# reference implementation for the EyeTribe Server. The implementation provides a simple C# interface for communicating with the server through the [TET API](http://dev.theeyetribe.com/api/). This allows developers to easily get started and focus their energy on creating innovative and immersive apps using our eye tracking technology. 
+This is the C# library implementation for the EyeTribe Dev Kit. This reference implementation provides a simple C# interface for communicating with the EyeTribe Server through our open [TET API](http://dev.theeyetribe.com/api/). This allows developers to easily get started and focus their energy on creating innovative and immersive apps using our eye tracking technology. 
 
 This version is to be considered **_beta_**. Feedback and bug fix submissions are welcome.
 
-Please visit our [developer website](http://dev.theeyetribe.com) for more information.
+Please visit our [developer website](http://dev.theeyetribe.com) for documentation and tutorials. Please use our [public forum](http://theeyetribe.com/forum) for questions and support.
 
 
 Dependencies
 ----
 
-The implementation is .NET 3.5 compliant and uses [Json.NET](http://james.newtonking.com/json) for parsing.
+The implementation is .NET 3.5 compliant for backwards compatibility and [Unity](http://unity3d.com) support. The library uses [Json.NET](http://james.newtonking.com/json) for JSON parsing.
+
 
 Build
 ----
 
-To build, open solution file in compliant [Visual Studio](http://www.visualstudio.com/) version and build.
+To build, open solution file in compliant [Visual Studio](http://www.visualstudio.com/) version and build. 
 
-Documentation
+Note that building for .Net 3.5 compliance may require the installation of [.Net Framwork 3.5 SP1](https://www.microsoft.com/en-us/download/details.aspx?id=22)
+
+
+Tutorials
 ----
-Find documentation of this library at [TET C# Doc](http://eyetribe.github.io/tet-csharp-client).
+
+A simple guide to using this C# SDK is found in the [tutorials section](http://dev.theeyetribe.com/csharp/) of our developer website. More tutorials will be provided in the near future.
+
 
 Samples
 ----
@@ -32,10 +38,9 @@ Samples
 Open source samples for windows are available through [GitHub](https://github.com/eyetribe). These samples shows how to calibrate the EyeTribe Server and give examples of how unique user experiences can be created using eye tracking.
 
 
-Tutorials
+Documentation
 ----
-
-A simple guide to using this C# SDK is found in the [tutorials section](http://dev.theeyetribe.com/csharp/) of our developer website. More tutorials will be provided in the near future.
+Find documentation of this library at [EyeTribe C# Doc](http://eyetribe.github.io/tet-csharp-client).
 
 
 API Reference
@@ -46,6 +51,16 @@ The complete API specification used by the C# SDK to communicate with the server
 
 Changelog
 ----
+0.9.56 (2015-03-18)
+
+- Added *GetHashCode(*) implementation for all public data types
+- Refactored internal *Collection* types, fixing several race condition bugs
+- Improved *ThreadPool* implementation
+- Fixing bugs associated to *CalibrationPoint* resampling
+- Fixing network initialization bugs
+- Clearing *Listener* types now requires explicit call to *GazeManager.deactivate()*
+- Minor syntax changes
+
 0.9.49 (2014-12-09)
 
 - Ensured callback order of listener types during activation 

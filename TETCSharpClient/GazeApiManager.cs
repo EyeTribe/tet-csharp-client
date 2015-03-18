@@ -488,53 +488,6 @@ namespace TETCSharpClient
         }
     }
 
-    internal class BlockingQueue<T>
-    {
-        private readonly Queue<T> queue = new Queue<T>();
-        private bool isStopped;
-
-        public BlockingQueue() { }
-
-        public int Count { get { lock (queue) { return null != queue ? queue.Count : 0; } } }
-
-        public void Enqueue(T item)
-        {
-            lock (queue)
-            {
-                if (isStopped)
-                    return;
-                queue.Enqueue(item);
-                if (queue.Count == 1)
-                    Monitor.PulseAll(queue);
-            }
-        }
-
-        public T Dequeue()
-        {
-            lock (queue)
-            {
-                if (isStopped)
-                    return default(T);
-                if (queue.Count == 0)
-                    Monitor.Wait(queue);
-                if (isStopped)
-                    return default(T);
-                else
-                    return queue.Dequeue();
-            }
-        }
-
-        public void Stop()
-        {
-            lock (queue)
-            {
-                queue.Clear();
-                isStopped = true;
-                Monitor.PulseAll(queue);
-            }
-        }
-    }
-
     //<summary>
     // Callback interface responsible for handling messaages returned from the GazeApiManager 
     // </summary>

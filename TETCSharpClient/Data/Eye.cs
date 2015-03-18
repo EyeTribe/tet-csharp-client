@@ -75,5 +75,15 @@ namespace TETCSharpClient.Data
                 PupilCenterCoordinates.Equals(other.PupilCenterCoordinates) &&
                 Double.Equals(PupilSize, other.PupilSize);
         }
+
+        public override int GetHashCode()
+        {
+            int hash = 337;
+            hash = hash * 797 + RawCoordinates.GetHashCode();
+            hash = hash * 797 + SmoothedCoordinates.GetHashCode();
+            hash = hash * 797 + PupilCenterCoordinates.GetHashCode();
+            hash = hash * 797 + PupilSize.GetHashCode();
+            return hash;
+        }
     }
 }
