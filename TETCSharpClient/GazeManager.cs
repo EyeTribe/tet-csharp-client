@@ -457,7 +457,7 @@ namespace TETCSharpClient
                                         //Notify calibration listener that a new calibration point has been sampled
                                         try
                                         {
-                                            calibrationListener.OnCalibrationProgress(sampledCalibrationPoints / totalCalibrationPoints);
+                                            calibrationListener.OnCalibrationProgress((double)sampledCalibrationPoints / totalCalibrationPoints);
                                         }
                                         catch (Exception e)
                                         {
