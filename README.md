@@ -5,6 +5,13 @@ C# SDK for the EyeTribe Dev Kit
 
 This is the C# library implementation for the EyeTribe Dev Kit. This reference implementation provides a C# interface for communicating with the EyeTribe Server through the open EyeTribe API. The library allow developers to get started quickly and focus their efforts on creating truly immersive and innovative apps using our eye tracking technology.
 
+Download
+----
+Download the [latest NuGet package](https://www.nuget.org/packages/EyeTribe.ClientSdk/) or grab via Package manager:
+
+    PM> Install-Package EyeTribe.ClientSdk
+
+
 Documentation
 ----
 Find documentation of this library at [EyeTribe C# Doc](http://eyetribe.github.io/tet-csharp-client). The EyeTribe API reference is found at [Eye Tribe Developer Website](http://dev.theeyetribe.com/api/).
