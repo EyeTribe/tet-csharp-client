@@ -627,11 +627,11 @@ namespace EyeTribe.ClientSdk
         /// </summary>
         internal static void HandleOnScreenStatesChanged(Object stateInfo)
         {
-            ITrackerStateListener listener = null;
+            IScreenStateListener listener = null;
             try
             {
                 Object[] objs = (Object[])stateInfo;
-                listener = (ITrackerStateListener)objs[0];
+                listener = (IScreenStateListener)objs[0];
                 Int32 screenIndex = Convert.ToInt32(objs[1]);
                 Int32 screenResolutionWidth = Convert.ToInt32(objs[2]);
                 Int32 screenResolutionHeight = Convert.ToInt32(objs[3]);
@@ -1676,19 +1676,6 @@ namespace EyeTribe.ClientSdk
         /// </summary>
         /// <param name="trackerState">the current state of the physical Tracker device</param>
         void OnTrackerStateChanged(GazeManager.TrackerState trackerState);
-
-        /// <summary>
-        /// A notification call back indicating that main screen index has changed. 
-        /// This is only relevant for multiscreen setups. Implementing classes should
-        /// update themselves accordingly if needed.
-        /// Register for updates through GazeManager.AddTrackerStateListener().
-        /// </summary>
-        /// <param name="screenIndex">the currently valid screen index</param>
-        /// <param name="screenResolutionWidth">screen resolution width in pixels</param>
-        /// <param name="screenResolutionHeight">screen resolution height in pixels</param>
-        /// <param name="screenPhysicalWidth">Physical screen width in meters</param>
-        /// <param name="screenPhysicalHeight">Physical screen height in meters</param>
-        void OnScreenStatesChanged(int screenIndex, int screenResolutionWidth, int screenResolutionHeight, float screenPhysicalWidth, float screenPhysicalHeight);
     }
 
     /// <summary>
