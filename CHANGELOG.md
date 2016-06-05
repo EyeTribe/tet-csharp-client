@@ -1,6 +1,10 @@
 # Change Log #
 ---
 
+Version 0.9.77.1 (2016-06-05)
+---
+- Fix listener bug
+
 Version 0.9.77 (2016-05-17)
 ---
 - Extensive rewrite of core classes
