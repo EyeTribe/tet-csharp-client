@@ -11,7 +11,7 @@ using EyeTribe.ClientSdk.Request;
 
 namespace EyeTribe.ClientSdk.Response
 {
-    public class CalibrationPointEndResponse : ResponseBase
+    internal class CalibrationPointEndResponse : ResponseBase
     {
         public CalibrationPointEndResponse() : base()
         {

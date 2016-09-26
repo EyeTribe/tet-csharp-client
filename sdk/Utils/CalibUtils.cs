@@ -8,8 +8,6 @@ namespace EyeTribe.ClientSdk.Utils
 {
     public class CalibUtils
     {
-        private const float Epsilon = 1e-005f;
-
         public enum CalibQuality
         {
             NONE = 0,
@@ -32,21 +30,21 @@ namespace EyeTribe.ClientSdk.Utils
          */
         public static CalibQuality GetCalibQuality(CalibrationResult result)
         {
-            if (result != null && result.AverageErrorDegree > Epsilon)
+            if (result != null && !float.IsNaN((float)result.AverageErrorDegree))
             {
-                if (result.AverageErrorDegree < 0.5)
+                if (result.AverageErrorDegree < 0.5f)
                 {
                     return CalibQuality.PERFECT;
                 }
-                else if (result.AverageErrorDegree < 0.7)
+                else if (result.AverageErrorDegree < 0.7f)
                 {
                     return CalibQuality.GOOD;
                 }
-                else if (result.AverageErrorDegree < 1)
+                else if (result.AverageErrorDegree < 1f)
                 {
                     return CalibQuality.MODERATE;
                 }
-                else if (result.AverageErrorDegree < 1.5)
+                else if (result.AverageErrorDegree < 1.5f)
                 {
                     return CalibQuality.POOR;
                 }
@@ -242,7 +240,7 @@ namespace EyeTribe.ClientSdk.Utils
             return anchors;
         }
 
-        private static void Shuffle<T>(IList<T> list)
+        protected static void Shuffle<T>(IList<T> list)
         {
             System.Random rng = new System.Random();
             int n = list.Count;

@@ -66,8 +66,8 @@ namespace EyeTribe.ClientSdk.Data
 
         public CalibrationPoint()
         {
-            Coordinates = new Point2D();
-            MeanEstimatedCoords = new Point2D();
+            Coordinates = Point2D.Zero;
+            MeanEstimatedCoords = Point2D.Zero;
             Accuracy = new Accuracy();
             MeanError = new MeanError();
             StandardDeviation = new StandardDeviation();

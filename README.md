@@ -19,7 +19,7 @@ Find documentation of this library at [EyeTribe C# Doc](http://eyetribe.github.i
 Samples
 ----
 
-Open source samples for windows are available through [GitHub](https://github.com/eyetribe). These samples shows how to calibrate the EyeTribe Server and give examples of how unique user experiences can be created using eye tracking.
+Open source [C# Samples](https://github.com/EyeTribe/tet-csharp-samples) for windows are available through [GitHub](https://github.com/eyetribe). These samples shows how to calibrate the EyeTribe Server and give examples of how unique user experiences can be created using eye tracking.
 
 Building (optional)
 ----
