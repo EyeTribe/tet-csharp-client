@@ -23,15 +23,15 @@ namespace EyeTribe.ClientSdk.Response
         public int? TrackerState { set; get; }
 
         [DefaultValue(null)]
-        [JsonProperty(PropertyName = Protocol.TRACKER_ISCALIBRATING)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_IS_CALIBRATING)]
         public bool? IsCalibrating { set; get; }
 
         [DefaultValue(null)]
-        [JsonProperty(PropertyName = Protocol.TRACKER_ISCALIBRATED)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_IS_CALIBRATED)]
         public bool? IsCalibrated { set; get; }
 
         [DefaultValue(null)]
-        [JsonProperty(PropertyName = Protocol.TRACKER_CALIBRATIONRESULT)]
+        [JsonProperty(PropertyName = Protocol.TRACKER_CALIBRATION_RESULT)]
         public CalibrationResult CalibrationResult { set; get; }
 
         [DefaultValue(null)]

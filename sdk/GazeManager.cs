@@ -29,9 +29,9 @@ namespace EyeTribe.ClientSdk
     /// This singleton is the main entry point of the EyeTribe C# SDK. It exposes all routines associated to gaze control.
     /// <para>
     /// Using this class a developer can 'calibrate' an eye tracking setup and attach listeners to receive live data streams
-    /// of {@link GazeData} updates.
+    /// of <see cref="EyeTribe.ClientSdk.Data.GazeData"/> updates.
     /// <para>
-    /// Note that this is a thin wrapper class. Core SDK implementation can be found in {@link GazeManagerCore}.
+    /// Note that this is a thin wrapper class. Core SDK implementation can be found in <see cref="EyeTribe.ClientSdk.GazeManagerCore"/>.
     /// </summary>
     public class GazeManager : GazeManagerCore
     {
@@ -61,14 +61,9 @@ namespace EyeTribe.ClientSdk
 
         #region Methods
 
-        public override GazeApiManager CreateApiManager(IGazeApiReponseListener responseListener, IGazeApiConnectionListener connectionListener)
+        internal override GazeApiManager CreateApiManager(IGazeApiReponseListener responseListener, IGazeApiConnectionListener connectionListener)
         {
             return new GazeApiManager(responseListener, connectionListener);
-        }
-
-        public override bool ParseApiResponse(Object stateInfo)
-        {
-            return false;
         }
 
         #endregion

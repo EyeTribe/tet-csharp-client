@@ -34,8 +34,6 @@ namespace EyeTribe.ClientSdk
     {
         #region Constants
 
-        public const bool IS_DEBUG_MODE = false;
-
         public const long DEFAULT_TIMEOUT_SECONDS = 10;
         public const long DEFAULT_TIMEOUT_MILLIS = DEFAULT_TIMEOUT_SECONDS * 1000;
 
@@ -48,15 +46,22 @@ namespace EyeTribe.ClientSdk
         /// </summary>
         public enum TrackerState
         {
+            ///<summary>Tracker device is detected and working</summary>
             TRACKER_CONNECTED = 0,
+            ///<summary>Tracker device is not detected</summary>
             TRACKER_NOT_CONNECTED = 1,
+            ///<summary>Tracker device is detected but not working due to wrong/unsupported firmware</summary>
             TRACKER_CONNECTED_BADFW = 2,
+            ///<summary>Tracker device is detected but not working due to unsupported USB host</summary>
             TRACKER_CONNECTED_NOUSB3 = 3,
-            TRACKER_CONNECTED_NOSTREAM = 4
+            ///<summary>Tracker device is detected but not working due to no stream could be received</summary>
+            TRACKER_CONNECTED_NOSTREAM = 4,
+            ///<summary>Tracker state is undefined. GazeManager not activated</summary>
+            TRACKER_UNDEFINED = -1,
         }
 
         /// <summary>
-        /// The possible frame grabbing modes of the Tracker Server
+        /// Mode in witch the EyeTribe server delivers gaze data stream
         /// </summary>
         public enum ClientMode
         {
@@ -67,12 +72,14 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// The possible frame rates of the Tracker Server
+        /// The possible frame rates of the EyeTribe Server
         /// </summary>
         public enum FrameRate
         {
+            ///<summary>FrameRate is undefined. GazeManager not activated</summary>
+            FPS_UNDEFINED = 0,
             FPS_30 = 30,
-            FPS_60 = 60
+            FPS_60 = 60,
         }
 
         /// <summary>
@@ -80,14 +87,23 @@ namespace EyeTribe.ClientSdk
         /// </summary>
         public enum ApiVersion
         {
+            ///<summary>ApiVersion is undefined. GazeManager not activated</summary>
+            VERSION_UNDEFINED = 0,
             VERSION_1_0 = 1
+        }
+
+        private void ResetEnums() 
+        {
+            Trackerstate = TrackerState.TRACKER_UNDEFINED;
+            Framerate = FrameRate.FPS_UNDEFINED;
+            version = ApiVersion.VERSION_UNDEFINED;
         }
 
         #endregion
 
         #region Variables
 
-        protected GazeApiManager ApiManager;
+        internal GazeApiManager ApiManager;
 
         protected bool IsActive;
 
@@ -103,9 +119,12 @@ namespace EyeTribe.ClientSdk
         internal SynchronizedCollection<ITrackerStateListener> TrackerStateListeners;
         internal SynchronizedCollection<IScreenStateListener> ScreenStateListeners;
         internal SynchronizedCollection<IConnectionStateListener> ConnectionStateListeners;
-        protected ICalibrationProcessHandler CalibrationListener;
+        internal SynchronizedCollection<ICalibrationStateListener> CalibrationStateListeners;
+        protected ICalibrationProcessHandler _CalibrationProcessListener;
 
         protected GazeData LatestGazeData;
+
+        private static bool _IsDebug;
 
         #endregion
 
@@ -118,6 +137,8 @@ namespace EyeTribe.ClientSdk
             TrackerStateListeners = new SynchronizedCollection<ITrackerStateListener>();
             ScreenStateListeners = new SynchronizedCollection<IScreenStateListener>();
             ConnectionStateListeners = new SynchronizedCollection<IConnectionStateListener>();
+            CalibrationStateListeners = new SynchronizedCollection<ICalibrationStateListener>();
+            ResetEnums();
         }
 
         #endregion
@@ -125,7 +146,7 @@ namespace EyeTribe.ClientSdk
         #region Get/Set
 
         /// <summary>
-        /// Is the client library connected to Tracker Server?
+        /// Is the client library connected to EyeTribe Server?
         /// </summary>
         [Obsolete("Deprecated, use IsActivated() instead", false)]
         public bool IsConnected
@@ -134,7 +155,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Is the client library connected to Tracker Server and initialized?
+        /// Is the client library connected to EyeTribe Server and initialized?
         /// </summary>
         public bool IsActivated
         {
@@ -225,7 +246,7 @@ namespace EyeTribe.ClientSdk
 
         /// <summary>
         /// Length of a heartbeat in milliseconds. 
-        /// The Tracker Server defines the desired length of a heartbeat and is in
+        /// The EyeTribe Server defines the desired length of a heartbeat and is in
         /// this implementation automatically acquired through the Tracker API.
         [Obsolete("Deprecated, as of EyeTribe Server v.0.9.77 using Heartbeat no longer has any effect", false)] 
         internal int HeartbeatMillis
@@ -235,7 +256,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Number of frames per second delivered by Tracker Server
+        /// Number of frames per second delivered by EyeTribe Server
         /// </summary>
         public FrameRate Framerate
         {
@@ -244,7 +265,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Current API version compliance of Tracker Server
+        /// Current API version compliance of EyeTribe Server
         /// </summary>
         protected ApiVersion version
         {
@@ -260,6 +281,15 @@ namespace EyeTribe.ClientSdk
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Is the client runnning in debug mode and thereby outputting debug info?
+        /// </summary>
+        public static bool DebugMode
+        {
+            get { return _IsDebug; }
+            set { _IsDebug = value; }
         }
 
         #endregion
@@ -282,249 +312,294 @@ namespace EyeTribe.ClientSdk
                 ResponseBase response = (ResponseBase)objs[0];
                 IRequest request = (IRequest)objs[1];
 
-                switch (response.Category)
+                // Optional parsing phase for implementing classes
+                if (ParseApiResponse(stateInfo))
                 {
-                    case Protocol.CATEGORY_TRACKER:
+                    //Optional parsing successful, consume reponse
+                }
+                else
+                {
+                    switch (response.Category)
+                    {
+                        case Protocol.CATEGORY_TRACKER:
 
-                        if (response.Request.Equals(Protocol.TRACKER_REQUEST_GET))
-                        {
-                            TrackerGetResponse tgr = (TrackerGetResponse)response;
-
-                            if (null != tgr.Values.Version)
-                                version = (ApiVersion)tgr.Values.Version;
-
-                            if (null != tgr.Values.FrameRate)
-                                Framerate = (FrameRate)tgr.Values.FrameRate;
-
-                            if (null != tgr.Values.TrackerState)
+                            if (response.Request.Equals(Protocol.TRACKER_REQUEST_GET))
                             {
-                                //if tracker state changed, notify listeners
-                                if ((int)tgr.Values.TrackerState != (int)Convert.ChangeType(Trackerstate, Trackerstate.GetTypeCode()))
+                                TrackerGetResponse tgr = (TrackerGetResponse)response;
+
+                                if (null != tgr.Values.Version)
+                                    version = (ApiVersion)tgr.Values.Version;
+
+                                if (null != tgr.Values.FrameRate)
+                                    Framerate = (FrameRate)tgr.Values.FrameRate;
+
+                                if (null != tgr.Values.TrackerState)
                                 {
-                                    Trackerstate = (TrackerState)tgr.Values.TrackerState;
-
-                                    foreach (ITrackerStateListener listener in TrackerStateListeners)
+                                    //if tracker state changed, notify listeners
+                                    if ((int)tgr.Values.TrackerState != (int)Convert.ChangeType(Trackerstate, Trackerstate.GetTypeCode()))
                                     {
-                                        ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnTrackerStateChanged), new Object[] { listener, Trackerstate });
-                                    }
-                                }
-                            }
+                                        Trackerstate = (TrackerState)tgr.Values.TrackerState;
 
-                            if (null != tgr.Values.IsCalibrating)
-                                IsCalibrating = (bool)tgr.Values.IsCalibrating;
-                            if (null != tgr.Values.IsCalibrated)
-                                IsCalibrated = (bool)tgr.Values.IsCalibrated;
-
-                            if (null != tgr.Values.CalibrationResult)
-                            {
-                                //is result different from current?
-                                if (null == LastCalibrationResult || !LastCalibrationResult.Equals(tgr.Values.CalibrationResult))
-                                {
-                                    LastCalibrationResult = tgr.Values.CalibrationResult;
-
-                                    foreach (ICalibrationResultListener listener in CalibrationResultListeners)
-                                    {
-                                        ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationChanged), new Object[] { listener, IsCalibrated, LastCalibrationResult });
-                                    }
-                                }
-                            }
-
-                            if (null != tgr.Values.ScreenResolutionWidth)
-                                ScreenResolutionWidth = (int)tgr.Values.ScreenResolutionWidth;
-
-                            if (null != tgr.Values.ScreenResolutionHeight)
-                                ScreenResolutionHeight = (int)tgr.Values.ScreenResolutionHeight;
-
-                            if (null != tgr.Values.ScreenPhysicalWidth)
-                                ScreenPhysicalWidth = (float)tgr.Values.ScreenPhysicalWidth;
-
-                            if (null != tgr.Values.ScreenPhysicalHeight)
-                                ScreenPhysicalHeight = (float)tgr.Values.ScreenPhysicalHeight;
-
-                            if (null != tgr.Values.ScreenIndex)
-                            {
-                                //if screen index changed, notify listeners
-                                if ((int)tgr.Values.ScreenIndex != ScreenIndex)
-                                {
-                                    ScreenIndex = (int)tgr.Values.ScreenIndex;
-
-                                    foreach (IScreenStateListener listener in ScreenStateListeners)
-                                    {
-                                        ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnScreenStatesChanged), new Object[] { listener, ScreenIndex, ScreenResolutionWidth, ScreenResolutionHeight, ScreenPhysicalWidth, ScreenPhysicalHeight });
-                                    }
-                                }
-                            }
-
-                            if (null != tgr.Values.Frame)
-                            {
-                                GazeData gd = tgr.Values.Frame;
-
-                                //fixing timestamp based on string representation, Json 32bit int issue
-                                if (!String.IsNullOrEmpty(gd.TimeStampString))
-                                {
-                                    try
-                                    {
-                                        DateTime gdTime = DateTime.ParseExact(gd.TimeStampString, GazeData.TIMESTAMP_STRING_FORMAT,
-                                            System.Globalization.CultureInfo.InvariantCulture);
-                                        gd.TimeStamp = (long)((double)gdTime.Ticks / TimeSpan.TicksPerMillisecond);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        //consume possible error
-                                    }
-                                }
-
-                                LatestGazeData = gd;
-
-                                foreach (IGazeListener listener in GazeListeners)
-                                {
-                                    ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnGazeFrame), new Object[] { listener, gd });
-                                }
-                            }
-
-                            //Handle initialization
-                            if (IsInitializing)
-                            {
-                                //we make sure response is inital get request and not a 'push mode' frame
-                                if (null == tgr.Values.Frame)
-                                {
-                                    lock (InitializationLock)
-                                    {
-                                        IsInitialized = true;
-                                        IsInitializing = false;
-
-                                        Monitor.Pulse(InitializationLock);
-                                    }
-                                }
-                            }
-                        }
-                        else if (response.Request.Equals(Protocol.TRACKER_REQUEST_SET))
-                        {
-                            //Do nothing
-                        }
-                        break;
-
-                    case Protocol.CATEGORY_CALIBRATION:
-
-                        switch (response.Request)
-                        {
-                            case Protocol.CALIBRATION_REQUEST_START:
-
-                                IsCalibrating = true;
-
-                                if (null != CalibrationListener)
-                                    //Notify calibration listener that a new calibration process was successfully started
-                                    try
-                                    {
-                                        CalibrationListener.OnCalibrationStarted();
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        Console.WriteLine("Exception while calling ICalibrationProcessHandler.OnCalibrationStarted() on listener " + CalibrationListener + ": " + e.StackTrace);
-                                    }
-
-                                break;
-
-                            case Protocol.CALIBRATION_REQUEST_POINTSTART:
-                                break;
-
-                            case Protocol.CALIBRATION_REQUEST_POINTEND:
-
-                                CalibrationPointEndResponse cper = (CalibrationPointEndResponse)response;
-
-                                if (cper == null || cper.Values.CalibrationResult == null)
-                                {
-                                    ++SampledCalibrationPoints;
-
-                                    if (null != CalibrationListener)
-                                    {
-                                        //Notify calibration listener that a new calibration point has been sampled
-                                        try
+                                        foreach (ITrackerStateListener listener in TrackerStateListeners)
                                         {
-                                            CalibrationListener.OnCalibrationProgress(SampledCalibrationPoints / TotalCalibrationPoints);
+                                            ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnTrackerStateChanged), new Object[] { listener, Trackerstate });
                                         }
-                                        catch (Exception e)
-                                        {
-                                            Console.WriteLine("Exception while calling ICalibrationProcessHandler.OnCalibrationProgress() on listener " + CalibrationListener + ": " + e.StackTrace);
-                                        }
-
-                                        if (SampledCalibrationPoints == TotalCalibrationPoints)
-                                            //Notify calibration listener that all calibration points have been sampled and the analysis of the calirbation results has begun 
-                                            try
-                                            {
-                                                CalibrationListener.OnCalibrationProcessing();
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                Console.WriteLine("Exception while calling ICalibrationProcessHandler.OnCalibrationProcessing() on listener " + CalibrationListener + ": " + e.StackTrace);
-                                            }
                                     }
                                 }
-                                else
+
+                                bool calibStateChanged = false;
+                                if (null != tgr.Values.IsCalibrating)
                                 {
-                                    IsCalibrated = cper.Values.CalibrationResult.Result;
-                                    IsCalibrating = !cper.Values.CalibrationResult.Result;
+                                    if (IsCalibrating != (bool)tgr.Values.IsCalibrating)
+                                        calibStateChanged = true;
+                                    IsCalibrating = (bool)tgr.Values.IsCalibrating;
+                                }
+                                if (null != tgr.Values.IsCalibrated)
+                                {
+                                    if (IsCalibrated != (bool)tgr.Values.IsCalibrated)
+                                        calibStateChanged = true;
+                                    IsCalibrated = (bool)tgr.Values.IsCalibrated;
+                                }
 
-                                    // Evaluate resample points, we decrement according to number of points needing resampling
-                                    SampledCalibrationPoints -= cper.Values.CalibrationResult.Calibpoints.Where(cp => cp.State == CalibrationPoint.STATE_RESAMPLE
-                                        || cp.State == CalibrationPoint.STATE_NO_DATA).Count();
-
-                                    // Notify calibration result listeners if calibration changed
-                                    if (null == LastCalibrationResult || !LastCalibrationResult.Equals(cper.Values.CalibrationResult))
+                                // If calibration state changed, notify listeners
+                                if (calibStateChanged)
+                                    foreach (ICalibrationStateListener listener in CalibrationStateListeners)
                                     {
-                                        LastCalibrationResult = cper.Values.CalibrationResult;
+                                        ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationStateChanged), new Object[] { listener, IsCalibrating, IsCalibrated });
+                                    }
+
+                                if (null != tgr.Values.CalibrationResult)
+                                {
+                                    //is result different from current?
+                                    if (null == LastCalibrationResult || !LastCalibrationResult.Equals(tgr.Values.CalibrationResult))
+                                    {
+                                        LastCalibrationResult = tgr.Values.CalibrationResult;
 
                                         foreach (ICalibrationResultListener listener in CalibrationResultListeners)
                                         {
                                             ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationChanged), new Object[] { listener, IsCalibrated, LastCalibrationResult });
                                         }
                                     }
+                                }
 
-                                    if (null != CalibrationListener)
+                                if (null != tgr.Values.ScreenResolutionWidth)
+                                    ScreenResolutionWidth = (int)tgr.Values.ScreenResolutionWidth;
+
+                                if (null != tgr.Values.ScreenResolutionHeight)
+                                    ScreenResolutionHeight = (int)tgr.Values.ScreenResolutionHeight;
+
+                                if (null != tgr.Values.ScreenPhysicalWidth)
+                                    ScreenPhysicalWidth = (float)tgr.Values.ScreenPhysicalWidth;
+
+                                if (null != tgr.Values.ScreenPhysicalHeight)
+                                    ScreenPhysicalHeight = (float)tgr.Values.ScreenPhysicalHeight;
+
+                                if (null != tgr.Values.ScreenIndex)
+                                {
+                                    //if screen index changed, notify listeners
+                                    if ((int)tgr.Values.ScreenIndex != ScreenIndex)
                                     {
-                                        // Notify calibration listener that calibration results are ready for evaluation
-                                        try
+                                        ScreenIndex = (int)tgr.Values.ScreenIndex;
+
+                                        foreach (IScreenStateListener listener in ScreenStateListeners)
                                         {
-                                            CalibrationListener.OnCalibrationResult(cper.Values.CalibrationResult);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            Console.WriteLine("Exception while calling ICalibrationProcessHandler.OnCalibrationResult() on listener " + CalibrationListener + ": " + e.StackTrace);
+                                            ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnScreenStatesChanged), new Object[] { listener, ScreenIndex, ScreenResolutionWidth, ScreenResolutionHeight, ScreenPhysicalWidth, ScreenPhysicalHeight });
                                         }
                                     }
                                 }
 
-                                break;
+                                if (null != tgr.Values.Frame)
+                                {
+                                    GazeData gd = tgr.Values.Frame;
 
-                            case Protocol.CALIBRATION_REQUEST_ABORT:
-                                IsCalibrating = false;
+                                    //fixing timestamp based on string representation, Json 32bit int issue
+                                    if (!String.IsNullOrEmpty(gd.TimeStampString))
+                                    {
+                                        try
+                                        {
+                                            DateTime gdTime = DateTime.ParseExact(gd.TimeStampString, GazeData.TIMESTAMP_STRING_FORMAT,
+                                                System.Globalization.CultureInfo.InvariantCulture);
+                                            gd.TimeStamp = (long)((double)gdTime.Ticks / TimeSpan.TicksPerMillisecond);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            //consume possible error
+                                        }
+                                    }
 
-                                //restore states of last calibration if any
-                                ApiManager.RequestCalibrationStates();
-                                break;
+                                    LatestGazeData = gd;
 
-                            case Protocol.CALIBRATION_REQUEST_CLEAR:
-                                IsCalibrated = false;
-                                IsCalibrating = false;
-                                LastCalibrationResult = null;
-                                break;
-                        }
-                        break; // end calibration switch
+                                    foreach (IGazeListener listener in GazeListeners)
+                                    {
+                                        ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnGazeFrame), new Object[] { listener, gd });
+                                    }
+                                }
 
-                    default:
+                                //Handle initialization
+                                if (IsInitializing)
+                                {
+                                    //we make sure response is inital get request and not a 'push mode' frame
+                                    if (null == tgr.Values.Frame)
+                                    {
+                                        lock (InitializationLock)
+                                        {
+                                            IsInitialized = true;
+                                            IsInitializing = false;
 
-                        if (ParseApiResponse(stateInfo))
-                        {
-                            //consume
-                        }
-                        else
-                        {
+                                            Monitor.Pulse(InitializationLock);
+                                        }
+                                    }
+                                }
+                            }
+                            else if (response.Request.Equals(Protocol.TRACKER_REQUEST_SET))
+                            {
+                                //Do nothing
+                            }
+                            break;
+
+                        case Protocol.CATEGORY_CALIBRATION:
+
+                            switch (response.Request)
+                            {
+                                case Protocol.CALIBRATION_REQUEST_START:
+
+                                    if (!IsCalibrating)
+                                    {
+                                        IsCalibrating = true;
+
+                                        // Calibration state changed, notify state listeners
+                                        foreach (ICalibrationStateListener listener in CalibrationStateListeners)
+                                        {
+                                            ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationStateChanged), new Object[] { listener, IsCalibrating, IsCalibrated });
+                                        }
+                                    }
+
+                                    //Notify calibration process listener that a new process was successfully started
+                                    if (null != _CalibrationProcessListener)
+                                        try
+                                        {
+                                            _CalibrationProcessListener.OnCalibrationStarted();
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Console.WriteLine("Exception while calling ICalibrationProcessHandler.OnCalibrationStarted() on listener " + _CalibrationProcessListener + ": " + e.StackTrace);
+                                        }
+
+                                    break;
+
+                                case Protocol.CALIBRATION_REQUEST_POINTSTART:
+                                    break;
+
+                                case Protocol.CALIBRATION_REQUEST_POINTEND:
+
+                                    CalibrationPointEndResponse cper = (CalibrationPointEndResponse)response;
+
+                                    if (cper == null || cper.Values.CalibrationResult == null)
+                                    {
+                                        ++SampledCalibrationPoints;
+
+                                        if (null != _CalibrationProcessListener)
+                                        {
+                                            //Notify calibration listener that a new calibration point has been sampled
+                                            try
+                                            {
+                                                _CalibrationProcessListener.OnCalibrationProgress(SampledCalibrationPoints / TotalCalibrationPoints);
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Console.WriteLine("Exception while calling ICalibrationProcessHandler.OnCalibrationProgress() on listener " + _CalibrationProcessListener + ": " + e.StackTrace);
+                                            }
+
+                                            if (SampledCalibrationPoints == TotalCalibrationPoints)
+                                                //Notify calibration listener that all calibration points have been sampled and the analysis of the calirbation results has begun 
+                                                try
+                                                {
+                                                    _CalibrationProcessListener.OnCalibrationProcessing();
+                                                }
+                                                catch (Exception e)
+                                                {
+                                                    Console.WriteLine("Exception while calling ICalibrationProcessHandler.OnCalibrationProcessing() on listener " + _CalibrationProcessListener + ": " + e.StackTrace);
+                                                }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        IsCalibrated = cper.Values.CalibrationResult.Result;
+                                        IsCalibrating = !cper.Values.CalibrationResult.Result;
+
+                                        // Evaluate resample points, we decrement according to number of points needing resampling
+                                        SampledCalibrationPoints -= cper.Values.CalibrationResult.Calibpoints.Where(cp => cp.State == CalibrationPoint.STATE_RESAMPLE
+                                            || cp.State == CalibrationPoint.STATE_NO_DATA).Count();
+
+                                        // Notify calibration result listeners if calibration changed
+                                        if (null == LastCalibrationResult || !LastCalibrationResult.Equals(cper.Values.CalibrationResult))
+                                        {
+                                            LastCalibrationResult = cper.Values.CalibrationResult;
+
+                                            foreach (ICalibrationResultListener listener in CalibrationResultListeners)
+                                            {
+                                                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationChanged), new Object[] { listener, IsCalibrated, LastCalibrationResult });
+                                            }
+                                        }
+
+                                        if (null != _CalibrationProcessListener)
+                                        {
+                                            // Notify calibration listener that calibration results are ready for evaluation
+                                            try
+                                            {
+                                                _CalibrationProcessListener.OnCalibrationResult(cper.Values.CalibrationResult);
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Console.WriteLine("Exception while calling ICalibrationProcessHandler.OnCalibrationResult() on listener " + _CalibrationProcessListener + ": " + e.StackTrace);
+                                            }
+                                        }
+                                    }
+
+                                    break;
+
+                                case Protocol.CALIBRATION_REQUEST_ABORT:
+
+                                    if (IsCalibrating)
+                                    {
+                                        IsCalibrating = false;
+
+                                        // Calibration state changed, notify state listeners
+                                        foreach (ICalibrationStateListener listener in CalibrationStateListeners)
+                                        {
+                                            ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationStateChanged), new Object[] { listener, IsCalibrating, IsCalibrated });
+                                        }
+                                    }
+
+                                    break;
+
+                                case Protocol.CALIBRATION_REQUEST_CLEAR:
+
+                                    if (IsCalibrated || IsCalibrating)
+                                    {
+                                        IsCalibrated = false;
+                                        IsCalibrating = false;
+
+                                        // Calibration state changed, notify state listeners
+                                        foreach (ICalibrationStateListener listener in CalibrationStateListeners)
+                                        {
+                                            ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnCalibrationStateChanged), new Object[] { listener, IsCalibrating, IsCalibrated });
+                                        }
+                                    }
+
+                                    LastCalibrationResult = null;
+                                    break;
+                            }
+                            break; // end calibration switch
+
+                        case "":
+
                             ResponseFailed rf = (ResponseFailed)response;
 
                             /* 
-                                * JSON Message status code is different from HttpStatusCode.OK. Check if special TET 
-                                * specific statuscode before handling error 
-                                */
+                             * JSON Message status code is different from HttpStatusCode.OK. Check if special TET 
+                             * specific statuscode before handling error 
+                             */
                             switch (rf.StatusCode)
                             {
                                 case Protocol.STATUSCODE_CALIBRATION_UPDATE:
@@ -550,13 +625,13 @@ namespace EyeTribe.ClientSdk
                                     Debug.WriteLine("StatusMessage: " + rf.Values.StatusMessage);
                                     break;
                             }
-                        }
 
-                        break;
+                            break;
+                    }
+
+                    if (null != request)
+                        request.Finish();
                 }
-
-                if (null != request)
-                    request.Finish();
             }
             catch (Exception e)
             {
@@ -565,7 +640,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Internal delegate helper method. Used fro ThreadPooling.
+        /// Internal delegate helper method. Used for ThreadPooling.
         /// </summary>
         internal static void HandleOnGazeFrame(Object stateInfo)
         {
@@ -584,7 +659,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Internal delegate helper method. Used fro ThreadPooling.
+        /// Internal delegate helper method. Used for ThreadPooling.
         /// </summary>
         internal static void HandleOnTrackerStateChanged(Object stateInfo)
         {
@@ -603,7 +678,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Internal delegate helper method. Used fro ThreadPooling.
+        /// Internal delegate helper method. Used for ThreadPooling.
         /// </summary>
         internal static void HandleOnCalibrationChanged(Object stateInfo)
         {
@@ -623,7 +698,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Internal delegate helper method. Used fro ThreadPooling.
+        /// Internal delegate helper method. Used for ThreadPooling.
         /// </summary>
         internal static void HandleOnScreenStatesChanged(Object stateInfo)
         {
@@ -660,7 +735,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Internal delegate helper method. Used fro ThreadPooling.
+        /// Internal delegate helper method. Used for ThreadPooling.
         /// </summary>
         internal static void HandleOnConnectionStateChanged(Object stateInfo)
         {
@@ -675,6 +750,26 @@ namespace EyeTribe.ClientSdk
             catch (Exception e)
             {
                 Console.WriteLine("Exception while calling IConnectionStateListener.OnConnectionStateChanged() on listener " + listener + ": " + e.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Internal delegate helper method. Used for ThreadPooling.
+        /// </summary>
+        internal static void HandleOnCalibrationStateChanged(Object stateInfo)
+        {
+            ICalibrationStateListener listener = null;
+            try
+            {
+                Object[] objs = (Object[])stateInfo;
+                listener = (ICalibrationStateListener)objs[0];
+                Boolean isCalibrating = (Boolean)objs[1];
+                Boolean isCalibrated = (Boolean)objs[2];
+                listener.OnCalibrationStateChanged(isCalibrating, isCalibrated);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception while calling ICalibrationStateListener.OnCalibrationStateChanged() on listener " + listener + ": " + e.StackTrace);
             }
         }
 
@@ -703,7 +798,7 @@ namespace EyeTribe.ClientSdk
             return Activate(apiVersion, GazeApiManager.DEFAULT_SERVER_HOST, GazeApiManager.DEFAULT_SERVER_PORT);
         }
         /// <summary>
-        /// Activates TET C# Client and all underlying routines using default values. Should be called _only_ 
+        /// Activates EyeTribe C# SDK and all underlying routines using default values. Should be called _only_ 
         /// once when an application starts up. Calling thread will be locked during
         /// initialization.
         /// </summary>
@@ -718,7 +813,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Activates TET C# Client and all underlying routines. Should be called _only_ 
+        /// Activates EyeTribe C# SDK and all underlying routines. Should be called _only_ 
         /// once when an application starts up. Calling thread will be locked during
         /// initialization.
         /// </summary>
@@ -735,7 +830,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Activates TET C# Client and all underlying routines using default values. Should be called _only_ 
+        /// Activates EyeTribe C# SDK and all underlying routines using default values. Should be called _only_ 
         /// once when an application starts up. Calling thread will be locked during
         /// initialization.
         /// </summary>
@@ -751,7 +846,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Activates TET C# Client and all underlying routines. Should be called _only_ 
+        /// Activates EyeTribe C# SDK and all underlying routines. Should be called _only_ 
         /// once when an application starts up. Calling thread will be locked during
         /// initialization.
         /// </summary>
@@ -900,7 +995,7 @@ namespace EyeTribe.ClientSdk
                         {
                             int retryDelay = (int)Math.Round((float)timeout / retries);
 
-                            if (IS_DEBUG_MODE)
+                            if (_IsDebug)
                                 Debug.WriteLine("retryDelay: " + retryDelay);
 
                             try
@@ -925,7 +1020,7 @@ namespace EyeTribe.ClientSdk
                                             Thread.Sleep((int)(retryDelay - timePassed));
                                         }
 
-                                        if (IS_DEBUG_MODE)
+                                        if (_IsDebug)
                                             Debug.WriteLine("Connection Failed, num retry: " + numRetries);
                                     }
                                 }
@@ -1005,7 +1100,7 @@ namespace EyeTribe.ClientSdk
         }
 
         /// <summary>
-        /// Deactivates TET C# Client and all under lying routines. Should be called when
+        /// Deactivates EyeTribe C# SDK and all under lying routines. Should be called when
         /// a application closes down.
         /// </summary>
         public void Deactivate()
@@ -1020,47 +1115,31 @@ namespace EyeTribe.ClientSdk
                 if (null != ApiManager)
                     ApiManager.Close();
 
+                ResetEnums();
+
                 IsInitialized = false;
                 IsActive = false;
             }
         }
 
         /// <summary>
-        /// Adds a <see cref="EyeTribe.IGazeListener"/> to the TET C# client. This listener 
+        /// Adds a <see cref="EyeTribe.IGazeListener"/> to the EyeTribe C# SDK. This listener 
         /// will recieve <see cref="EyeTribe.Data.GazeData"/> updates when available
         /// </summary>
         /// <param name="listener">The <see cref="EyeTribe.IGazeListener"/> instance to add</param>
         public void AddGazeListener(IGazeListener listener)
         {
-            if (null != listener)
-            {
-                lock (GazeListeners)
-                {
-                    if (!GazeListeners.Contains(listener))
-                        GazeListeners.Add(listener);
-                }
-            }
+            AddListener<IGazeListener>(GazeListeners, listener);
         }
 
         /// <summary>
-        /// Remove a <see cref="EyeTribe.IGazeListener"/> from the TET C# client.
+        /// Remove a <see cref="EyeTribe.IGazeListener"/> from the EyeTribe C# SDK.
         /// </summary>
         /// <returns>True if succesfully removed, false otherwise</returns>
         /// <param name="listener">The <see cref="EyeTribe.IGazeListener"/> instance to remove</param>
         public bool RemoveGazeListener(IGazeListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                lock (GazeListeners)
-                {
-                    if (GazeListeners.Contains(listener))
-                        result = GazeListeners.Remove(listener);
-                }
-            }
-
-            return result;
+            return RemoveListener<IGazeListener>(GazeListeners, listener);
         }
 
         /// <summary>
@@ -1078,46 +1157,27 @@ namespace EyeTribe.ClientSdk
         /// <returns>True if already attached, false otherwise</returns>
         public bool HasGazeListener(IGazeListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                result = GazeListeners.Contains(listener);
-            }
-
-            return result;
+            return HasListener<IGazeListener>(GazeListeners, listener);
         }
 
         /// <summary>
-        /// Adds a <see cref="ICalibrationResultListener"/> to the TET C# client. This listener 
+        /// Adds a <see cref="ICalibrationResultListener"/> to the EyeTribe C# SDK. This listener 
         /// will recieve updates about calibration state changes.
         /// </summary>
         /// <param name="listener">The <see cref="EyeTribe.ICalibrationResultListener"/> instance to add</param>
         public void AddCalibrationResultListener(ICalibrationResultListener listener)
         {
-            if (null != listener)
-            {
-                if (!CalibrationResultListeners.Contains(listener))
-                    CalibrationResultListeners.Add(listener);
-            }
+            AddListener<ICalibrationResultListener>(CalibrationResultListeners, listener);
         }
 
         /// <summary>
-        /// Remove a <see cref="EyeTribe.ICalibrationResultListener"/> from the TET C# client.
+        /// Remove a <see cref="EyeTribe.ICalibrationResultListener"/> from the EyeTribe C# SDK.
         /// </summary>
         /// <returns>True if succesfully removed, false otherwise</returns>
         /// <param name="listener">The <see cref="EyeTribe.ICalibrationResultListener"/> instance to remove</param>
         public bool RemoveCalibrationResultListener(ICalibrationResultListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                if (CalibrationResultListeners.Contains(listener))
-                    result = CalibrationResultListeners.Remove(listener);
-            }
-
-            return result;
+            return RemoveListener<ICalibrationResultListener>(CalibrationResultListeners, listener);
         }
 
         /// <summary>
@@ -1135,46 +1195,27 @@ namespace EyeTribe.ClientSdk
         /// <returns>True if already attached, false otherwise</returns>
         public bool HasCalibrationResultListener(ICalibrationResultListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                result = CalibrationResultListeners.Contains(listener);
-            }
-
-            return result;
+            return HasListener<ICalibrationResultListener>(CalibrationResultListeners, listener);
         }
 
         /// <summary>
-        /// Adds a <see cref="EyeTribe.ITrackerStateListener"/> to the TET C# client. This listener 
+        /// Adds a <see cref="EyeTribe.ITrackerStateListener"/> to the EyeTribe C# SDK. This listener 
         /// will recieve updates about change of active screen index.
         /// </summary>
         /// <param name="listener">The <see cref="EyeTribe.ITrackerStateListener"/> instance to add</param>
         public void AddTrackerStateListener(ITrackerStateListener listener)
         {
-            if (null != listener)
-            {
-                if (!TrackerStateListeners.Contains(listener))
-                    TrackerStateListeners.Add(listener);
-            }
+            AddListener<ITrackerStateListener>(TrackerStateListeners, listener);
         }
 
         /// <summary>
-        /// Remove a <see cref="EyeTribe.ITrackerStateListener"/> from the TET C# client.
+        /// Remove a <see cref="EyeTribe.ITrackerStateListener"/> from the EyeTribe C# SDK.
         /// </summary>
         /// <returns>True if succesfully removed, false otherwise</returns>
         /// <param name="listener">The <see cref="EyeTribe.ITrackerStateListener"/> instance to remove</param>
         public bool RemoveTrackerStateListener(ITrackerStateListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                if (TrackerStateListeners.Contains(listener))
-                    result = TrackerStateListeners.Remove(listener);
-            }
-
-            return result;
+            return RemoveListener<ITrackerStateListener>(TrackerStateListeners, listener);
         }
 
         /// <summary>
@@ -1192,46 +1233,27 @@ namespace EyeTribe.ClientSdk
         /// <returns>True if already attached, false otherwise</returns>
         public bool HasTrackerStateListener(ITrackerStateListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                result = TrackerStateListeners.Contains(listener);
-            }
-
-            return result;
+            return HasListener<ITrackerStateListener>(TrackerStateListeners, listener);
         }
 
         /// <summary>
-        /// Adds a <see cref="EyeTribe.IScreenStateListener"/> to the TET C# client. This listener will 
+        /// Adds a <see cref="EyeTribe.IScreenStateListener"/> to the EyeTribe C# SDK. This listener will 
         /// receive updates about change of active screen index.
         /// </summary>
         /// <param name="listener">The <see cref="EyeTribe.IScreenStateListener"/> instance to add</param>
         public void AddScreenStateListener(IScreenStateListener listener)
         {
-            if (null != listener)
-            {
-                if (!ScreenStateListeners.Contains(listener))
-                    ScreenStateListeners.Add(listener);
-            }
+            AddListener<IScreenStateListener>(ScreenStateListeners, listener);
         }
 
         /// <summary>
-        /// Remove a <see cref="EyeTribe.IScreenStateListener"/> from the TET C# client.
+        /// Remove a <see cref="EyeTribe.IScreenStateListener"/> from the EyeTribe C# SDK.
         /// </summary>
         /// <returns>True if succesfully removed, false otherwise</returns>
         /// <param name="listener">The <see cref="EyeTribe.IScreenStateListener"/> instance to remove</param>
         public bool RemoveScreenStateListener(IScreenStateListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                if (ScreenStateListeners.Contains(listener))
-                    result = ScreenStateListeners.Remove(listener);
-            }
-
-            return result;
+            return RemoveListener<IScreenStateListener>(ScreenStateListeners, listener);
         }
 
         /// <summary>
@@ -1249,46 +1271,27 @@ namespace EyeTribe.ClientSdk
         /// <returns>True if already attached, false otherwise</returns>
         public bool HasScreenStateListener(IScreenStateListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                result = ScreenStateListeners.Contains(listener);
-            }
-
-            return result;
+            return HasListener<IScreenStateListener>(ScreenStateListeners, listener);
         }
 
         /// <summary>
-        /// Adds a <see cref="EyeTribe.IConnectionStateListener"/> to the TET C# client. This listener 
+        /// Adds a <see cref="EyeTribe.IConnectionStateListener"/> to the EyeTribe C# SDK. This listener 
         /// will recieve updates about change in connection state to the EyeTribe Server.
         /// </summary>
         /// <param name="listener">The <see cref="EyeTribe.IConnectionStateListener"/> instance to add</param>
         public void AddConnectionStateListener(IConnectionStateListener listener)
         {
-            if (null != listener)
-            {
-                if (!ConnectionStateListeners.Contains(listener))
-                    ConnectionStateListeners.Add(listener);
-            }
+            AddListener<IConnectionStateListener>(ConnectionStateListeners, listener);
         }
 
         /// <summary>
-        /// Remove a <see cref="EyeTribe.IConnectionStateListener"/> from the TET C# client.
+        /// Remove a <see cref="EyeTribe.IConnectionStateListener"/> from the EyeTribe C# SDK.
         /// </summary>
         /// <returns>True if succesfully removed, false otherwise</returns>
         /// <param name="listener">The <see cref="EyeTribe.IConnectionStateListener"/> instance to remove</param>
         public bool RemoveConnectionStateListener(IConnectionStateListener listener)
         {
-            bool result = false;
-
-            if (null != listener)
-            {
-                if (ConnectionStateListeners.Contains(listener))
-                    result = ConnectionStateListeners.Remove(listener);
-            }
-
-            return result;
+            return RemoveListener<IConnectionStateListener>(ConnectionStateListeners, listener);
         }
 
         /// <summary>
@@ -1306,11 +1309,76 @@ namespace EyeTribe.ClientSdk
         /// <returns>True if already attached, false otherwise</returns>
         public bool HasConnectionStateListener(IConnectionStateListener listener)
         {
+            return HasListener<IConnectionStateListener>(ConnectionStateListeners, listener);
+        }
+
+        /// <summary>
+        /// Adds a <see cref="EyeTribe.ICalibrationStateListener"/> to the EyeTribe C# SDK. This listener 
+        /// will recieve updates about change in calibration state in the EyeTribe Server.
+        /// </summary>
+        /// <param name="listener">The <see cref="EyeTribe.ICalibrationStateListener"/> instance to add</param>
+        public void AddCalibrationStateListener(ICalibrationStateListener listener)
+        {
+            AddListener<ICalibrationStateListener>(CalibrationStateListeners, listener);
+        }
+
+        /// <summary>
+        /// Remove a <see cref="EyeTribe.ICalibrationStateListener"/> from the EyeTribe C# SDK.
+        /// </summary>
+        /// <returns>True if succesfully removed, false otherwise</returns>
+        /// <param name="listener">The <see cref="EyeTribe.ICalibrationStateListener"/> instance to remove</param>
+        public bool RemoveCalibrationStateListener(ICalibrationStateListener listener)
+        {
+            return RemoveListener<ICalibrationStateListener>(CalibrationStateListeners, listener);
+        }
+
+        /// <summary>
+        /// Gets current number of attached <see cref="EyeTribe.ICalibrationStateListener"/> instances.
+        /// </summary>
+        /// <returns>Curent number of listeners</returns>
+        public int GetNumCalibrationStateListeners()
+        {
+            return CalibrationStateListeners.Count;
+        }
+
+        /// <summary>
+        /// Checkes if a given instance of <see cref="EyeTribe.ICalibrationStateListener"/> is currently attached.
+        /// </summary>
+        /// <returns>True if already attached, false otherwise</returns>
+        public bool HasCalibrationStateListener(ICalibrationStateListener listener)
+        {
+            return HasListener<ICalibrationStateListener>(CalibrationStateListeners, listener);
+        }
+
+        protected void AddListener<T>(SynchronizedCollection<T> coll, T listener)
+        {
+            if (null != listener)
+            {
+                if (!coll.Contains(listener))
+                    coll.Add(listener);
+            }
+        }
+
+        protected bool RemoveListener<T>(SynchronizedCollection<T> coll, T listener)
+        {
             bool result = false;
 
             if (null != listener)
             {
-                result = ConnectionStateListeners.Contains(listener);
+                if (coll.Contains(listener))
+                    result = coll.Remove(listener);
+            }
+
+            return result;
+        }
+
+        protected bool HasListener<T>(SynchronizedCollection<T> coll, T listener)
+        {
+            bool result = false;
+
+            if (null != listener)
+            {
+                result = coll.Contains(listener);
             }
 
             return result;
@@ -1319,7 +1387,7 @@ namespace EyeTribe.ClientSdk
         /// <summary>
         /// Clear all attached listeners, clears GazeData queue and stop broadcating
         /// </summary>
-        public void ClearListeners()
+        public virtual void ClearListeners()
         {
             if (null != GazeListeners)
                 GazeListeners.Clear();
@@ -1335,6 +1403,9 @@ namespace EyeTribe.ClientSdk
 
             if (null != ConnectionStateListeners)
                 ConnectionStateListeners.Clear();
+
+            if (null != CalibrationStateListeners)
+                CalibrationStateListeners.Clear();
         }
 
         /// <summary>
@@ -1455,7 +1526,7 @@ namespace EyeTribe.ClientSdk
                     {
                         SampledCalibrationPoints = 0;
                         TotalCalibrationPoints = numCalibrationPoints;
-                        CalibrationListener = listener;
+                        _CalibrationProcessListener = listener;
 
                         Object asyncLock = ApiManager.RequestCalibrationStart(numCalibrationPoints);
 
@@ -1505,10 +1576,10 @@ namespace EyeTribe.ClientSdk
                 if (IsCalibrating)
                     ApiManager.RequestCalibrationPointStart(x, y);
                 else
-                    Console.WriteLine("Calling CalibrationPointStart(), but TET C# Client calibration not started!");
+                    Console.WriteLine("Calling CalibrationPointStart(), but EyeTribe C# SDK calibration not started!");
             }
             else
-                Console.WriteLine("Calling CalibrationPointStart(), but TET C# Client not activated!");
+                Console.WriteLine("Calling CalibrationPointStart(), but EyeTribe C# SDK not activated!");
         }
 
         /// <summary>
@@ -1524,10 +1595,10 @@ namespace EyeTribe.ClientSdk
                 if (IsCalibrating)
                     ApiManager.RequestCalibrationPointEnd();
                 else
-                    Console.WriteLine("Calling CalibrationPointEnd(), but TET C# Client calibration not started!");
+                    Console.WriteLine("Calling CalibrationPointEnd(), but EyeTribe C# SDK calibration not started!");
             }
             else
-                Console.WriteLine("Calling CalibrationPointEnd(), but TET C# Client not activated!");
+                Console.WriteLine("Calling CalibrationPointEnd(), but EyeTribe C# SDK not activated!");
         }
 
         /// <summary>
@@ -1595,11 +1666,19 @@ namespace EyeTribe.ClientSdk
             if (IsActivated)
                 ApiManager.RequestCalibrationClear();
             else
-                Console.WriteLine("Calling CalibrationClear(), but TET C# Client not activated!");
+                Console.WriteLine("Calling CalibrationClear(), but EyeTribe C# SDK not activated!");
         }
 
-        public abstract GazeApiManager CreateApiManager(IGazeApiReponseListener responseListener, IGazeApiConnectionListener connectionListener);
+        /// <summary>
+        /// Classes implementing this abstract class must implement a factory method the creates the 
+        /// GazeApiManager class that manages communication with the EyeTribe Server.
+        /// </summary>
+        internal abstract GazeApiManager CreateApiManager(IGazeApiReponseListener responseListener, IGazeApiConnectionListener connectionListener);
 
+        /// <summary>
+        /// This method allow implementing classes to add an extra parsing phase after the core parsing
+        /// has been handled in <see cref="HandleApiResponse(Object)"/>.
+        /// </summary>
         public virtual bool ParseApiResponse(Object stateInfo) { return false; }
 
         #endregion
@@ -1616,8 +1695,25 @@ namespace EyeTribe.ClientSdk
         /// Implementing classes should update themselves accordingly if needed.
         /// Register for updates through GazeManager.AddGazeListener().
         /// </summary>
-        /// <param name="gazeData">Latest GazeData frame processed by Tracker Server</param> 
+        /// <param name="gazeData">Latest GazeData frame processed by EyeTribe Server</param> 
         void OnGazeUpdate(GazeData gazeData);
+    }
+
+    /// <summary>
+    /// Callback interface with methods associated to the changes in Calibration state.
+    /// This interface should be implemented by classes that are to recieve notifications of 
+    /// the EyeTribe Servers calibration state.
+    /// </summary>
+    public interface ICalibrationStateListener
+    {
+        /// <summary>
+        /// A notification call back indicating that state of calibration has changed. 
+        /// Implementing classes should update themselves accordingly if needed.
+        /// Register for updates through GazeManager.AddCalibrationStateListener().
+        /// </summary>
+        /// <param name="isCalibrating">is the EyeTribe Server calibrating?</param>
+        /// <param name="isCalibrated">is the EyeTribe Server calibrated?</param>
+        void OnCalibrationStateChanged(bool isCalibrating, bool isCalibrated);
     }
 
     /// <summary>
@@ -1632,7 +1728,7 @@ namespace EyeTribe.ClientSdk
         /// Implementing classes should update themselves accordingly if needed.
         /// Register for updates through GazeManager.AddCalibrationResultListener().
         /// </summary>
-        /// <param name="isCalibrated">is the Tracker Server calibrated?</param>
+        /// <param name="isCalibrated">is the EyeTribe Server calibrated?</param>
         /// <param name="calibResult">if calibrated, the currently valid CalibrationResult, otherwise null</param>
         void OnCalibrationChanged(bool isCalibrated, CalibrationResult calibResult);
     }

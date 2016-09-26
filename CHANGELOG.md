@@ -1,7 +1,15 @@
 # Change Log #
 ---
 
-Version 0.9.77.1 (2016-06-05)
+Version 0.9.77.3 (2016-09-26)
+---
+- Added support for listening to any calibration state change (ICalibrationStateListener)
+- Runtime 'debug mode' now controlled through GazeManager.DebugMode 
+- Default states for all GazeManager enum types
+- Unittests now using NUnit
+- Updated Json.NET to 9.0.1
+
+Version 0.9.77.2 (2016-06-05)
 ---
 - Fix listener bug
 

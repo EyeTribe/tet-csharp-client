@@ -42,9 +42,9 @@ namespace EyeTribe.ClientSdk.Data
 
         public Eye()
         {
-            RawCoordinates = new Point2D();
-            SmoothedCoordinates = new Point2D();
-            PupilCenterCoordinates = new Point2D();
+            RawCoordinates = Point2D.Zero;
+            SmoothedCoordinates = Point2D.Zero;
+            PupilCenterCoordinates = Point2D.Zero;
             PupilSize = 0d;
         }
 

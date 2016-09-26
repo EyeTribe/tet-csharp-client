@@ -108,8 +108,8 @@ namespace EyeTribe.ClientSdk.Data
             TimeStamp = (long)((double)now.Ticks / TimeSpan.TicksPerMillisecond);
             TimeStampString = now.ToString(TIMESTAMP_STRING_FORMAT);
             IsFixated = false;
-            RawCoordinates = new Point2D();
-            SmoothedCoordinates = new Point2D();
+            RawCoordinates = Point2D.Zero;
+            SmoothedCoordinates = Point2D.Zero;
 
             LeftEye = new Eye();
             RightEye = new Eye();

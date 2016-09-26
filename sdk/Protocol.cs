@@ -35,10 +35,10 @@ namespace EyeTribe.ClientSdk
         //public const string TRACKER_MODE_PUSH = "push"; //deprecated
         //public const string TRACKER_HEARTBEATINTERVAL = "heartbeatinterval"; //deprecated
         public const string TRACKER_VERSION = "version";
-        public const string TRACKER_ISCALIBRATED = "iscalibrated";
-        public const string TRACKER_ISCALIBRATING = "iscalibrating";
+        public const string TRACKER_IS_CALIBRATED = "iscalibrated";
+        public const string TRACKER_IS_CALIBRATING = "iscalibrating";
         public const string TRACKER_TRACKERSTATE = "trackerstate";
-        public const string TRACKER_CALIBRATIONRESULT = "calibresult";
+        public const string TRACKER_CALIBRATION_RESULT = "calibresult";
         public const string TRACKER_FRAMERATE = "framerate";
         public const string TRACKER_FRAME = "frame";
         public const string TRACKER_SCREEN_INDEX = "screenindex";

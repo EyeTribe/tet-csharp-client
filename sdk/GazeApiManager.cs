@@ -27,7 +27,7 @@ namespace EyeTribe.ClientSdk
     // This class manages communication with the underlying Tracker Server using
     // the Tracker API over TCP Sockets.
     // </summary>
-    public class GazeApiManager
+    internal class GazeApiManager
     {
         #region Constants
 
@@ -214,23 +214,23 @@ namespace EyeTribe.ClientSdk
             Request(tsr);
         }
 
-        public void RequestAllStates()
+        public virtual void RequestAllStates()
         {
             TrackerGetRequest tgr = new TrackerGetRequest();
 
             tgr.Values = new[]
 			{
-				Protocol.TRACKER_ISCALIBRATED,
-				Protocol.TRACKER_ISCALIBRATING,
+				Protocol.TRACKER_IS_CALIBRATED,
+				Protocol.TRACKER_IS_CALIBRATING,
                 Protocol.TRACKER_TRACKERSTATE,
 				Protocol.TRACKER_SCREEN_INDEX,
                 Protocol.TRACKER_SCREEN_RESOLUTION_WIDTH,
                 Protocol.TRACKER_SCREEN_RESOLUTION_HEIGHT,
                 Protocol.TRACKER_SCREEN_PHYSICAL_WIDTH,
                 Protocol.TRACKER_SCREEN_PHYSICAL_HEIGHT,
-                Protocol.TRACKER_CALIBRATIONRESULT,
+                Protocol.TRACKER_CALIBRATION_RESULT,
                 Protocol.TRACKER_FRAMERATE,
-				Protocol.TRACKER_VERSION
+				Protocol.TRACKER_VERSION,
 			};
 
             Request(tgr);
@@ -242,9 +242,9 @@ namespace EyeTribe.ClientSdk
 
             tgr.Values = new[]
 			{
-				Protocol.TRACKER_ISCALIBRATED,
-				Protocol.TRACKER_ISCALIBRATING,
-                Protocol.TRACKER_CALIBRATIONRESULT
+				Protocol.TRACKER_IS_CALIBRATED,
+				Protocol.TRACKER_IS_CALIBRATING,
+                Protocol.TRACKER_CALIBRATION_RESULT
 			};
 
             Request(tgr);
@@ -419,7 +419,9 @@ namespace EyeTribe.ClientSdk
         {
             try
             {
-                _Reader = new StreamReader(_Socket.GetStream(), Encoding.ASCII);
+                _Reader = new StreamReader(_Socket.GetStream(), Encoding.UTF8);
+
+                JsonSerializer serializer = JsonSerializer.CreateDefault();
 
                 while (_IsRunning)
                 {
@@ -427,13 +429,13 @@ namespace EyeTribe.ClientSdk
                     {
                         string responseJson = _Reader.ReadLine();
 
-                        if (GazeManager.IS_DEBUG_MODE)
+                        if (GazeManager.DebugMode)
                             Debug.WriteLine("IN: " + responseJson);
                                 
                         if (!String.IsNullOrEmpty(responseJson) && null != _ResponseListener)
                         {
                             JsonTextReader jsreader = new JsonTextReader(new StringReader(responseJson));
-                            JObject json = (JObject)new JsonSerializer().Deserialize(jsreader);
+                            JObject json = (JObject)serializer.Deserialize(jsreader);
                             JToken value;
                                 
                             int id = 0;
@@ -487,7 +489,7 @@ namespace EyeTribe.ClientSdk
                                     response.TransitTime = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - request.TimeStamp;
                             }
 
-                            if (GazeManagerCore.IS_DEBUG_MODE && null != response && response.TransitTime != 0)
+                            if (GazeManager.DebugMode && null != response && response.TransitTime != 0)
                                 Debug.WriteLine("IN: transitTime " + response.TransitTime);
 
                             if (null != _ResponseListener)
@@ -504,7 +506,7 @@ namespace EyeTribe.ClientSdk
             {
                 Debug.WriteLine("Exception while establishing incoming socket connection: " + e.Message);
 
-                if (GazeManager.IS_DEBUG_MODE)
+                if (GazeManager.DebugMode)
                     Debug.WriteLine(e.StackTrace);
             }
             finally
@@ -516,7 +518,7 @@ namespace EyeTribe.ClientSdk
                 _NetworkLayer.Close();
             }
 
-            if (GazeManager.IS_DEBUG_MODE)
+            if (GazeManager.DebugMode)
                 Debug.WriteLine("IncommingStreamHandler closing down");
         }
     }
@@ -578,7 +580,7 @@ namespace EyeTribe.ClientSdk
                 IRequest request = null;
                 String requestJson = string.Empty;
                 
-                _Writer = new StreamWriter(_Socket.GetStream(), Encoding.ASCII);
+                _Writer = new StreamWriter(_Socket.GetStream(), Encoding.UTF8);
 
                 //while waiting for queue to populate and thread not killed
                 while (_IsRunning)
@@ -600,7 +602,7 @@ namespace EyeTribe.ClientSdk
 
                             _OngoingRequests.TryAdd(request.Id, request);
 
-                            if(GazeManager.IS_DEBUG_MODE)
+                            if(GazeManager.DebugMode)
                                 Debug.WriteLine("OUT: " + requestJson);
 
                             break;
@@ -616,7 +618,7 @@ namespace EyeTribe.ClientSdk
                                 throw new Exception("OutgoingStreamHandler failed writing to stream despite several retires");
                             }
                                
-                        	if(GazeManager.IS_DEBUG_MODE)
+                        	if(GazeManager.DebugMode)
                         	{
                                 Debug.WriteLine("OutgoingStreamHandler IO exception: " + ioe.Message);
                                 Debug.WriteLine(ioe.StackTrace);
@@ -627,14 +629,14 @@ namespace EyeTribe.ClientSdk
             }
             catch (ThreadInterruptedException tie)
             {
-                if (GazeManager.IS_DEBUG_MODE)
+                if (GazeManager.DebugMode)
                     Debug.WriteLine("Outgoing stream handler interrupted: " + tie.Message);
             }
             catch (Exception e)
             {
                 Debug.WriteLine("Exception while establishing outgoing socket connection: " + e.Message);
 
-                if (GazeManager.IS_DEBUG_MODE)
+                if (GazeManager.DebugMode)
                     Debug.WriteLine(e.StackTrace);
             }
             finally
@@ -653,7 +655,7 @@ namespace EyeTribe.ClientSdk
                 _NetworkLayer.Close();
             }
 
-            if (GazeManager.IS_DEBUG_MODE)
+            if (GazeManager.DebugMode)
                 Debug.WriteLine("OutgoingStreamHandler closing down");
         }
     }

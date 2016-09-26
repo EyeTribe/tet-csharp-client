@@ -11,7 +11,7 @@ using EyeTribe.ClientSdk.Data;
 
 namespace EyeTribe.ClientSdk.Response
 {
-    public class CalibrationPointEndResponseValues
+    internal class CalibrationPointEndResponseValues
     {
         [JsonProperty(PropertyName = Protocol.CALIBRATION_CALIBRESULT)]
         public CalibrationResult CalibrationResult { set; get; }

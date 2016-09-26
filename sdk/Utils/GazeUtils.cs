@@ -105,7 +105,7 @@ namespace EyeTribe.ClientSdk.Utils
         /// </summary>
         /// <param name="leftEye"></param>
         /// <param name="rightEye"></param>
-        /// <returns>a normalized value [0..1]</returns>
+        /// <returns>a normalized value [0f..1f]</returns>
         public static double GetEyesDistanceNormalized(Eye leftEye, Eye rightEye)
         {
             double dist = Math.Abs(GetDistancePoint2D(leftEye.PupilCenterCoordinates, rightEye.PupilCenterCoordinates));
@@ -125,7 +125,7 @@ namespace EyeTribe.ClientSdk.Utils
         /// recorded min and max values
         /// </summary>
         /// <param name="gazeData">gaze data frame to base calculation upon</param>
-        /// <returns>a normalized value [0..1]</returns>
+        /// <returns>a normalized value [0f..1f]</returns>
         public static double GetEyesDistanceNormalized(GazeData gazeData)
         {
             return GetEyesDistanceNormalized(gazeData.LeftEye, gazeData.RightEye);
@@ -142,12 +142,12 @@ namespace EyeTribe.ClientSdk.Utils
         /// <summary>
         /// Converts a 2d point in relative values to a coordinate within parameter dimensions.
         /// <para/>
-        /// Use to map to screen coordinates.
+        /// Use to map relative values [0f..1f] to screen coordinates.
         /// </summary>
         /// <param name="point">gaze point to base calculation upon</param>
         /// <param name="dimWidthPix">dimension width in pixels to base calculation upon</param>
         /// <param name="dimHeightPix">dimension height in pixels to base calculation upon</param>
-        /// <returns>clamped gaze point</returns>
+        /// <returns>2D point in screen space</returns>
         public static Point2D GetRelativeToScreenSpace(Point2D point, int dimWidthPix, int dimHeightPix)
         {
             return new Point2D(
@@ -162,6 +162,7 @@ namespace EyeTribe.ClientSdk.Utils
         /// <param name="point">gaze point to base calculation upon</param>
         /// <param name="dimWidthPix">dimension width in pixels to base calculation upon</param>
         /// <param name="dimHeightPix">dimension height in pixels to base calculation upon</param>
+        /// <returns>2D point in relative values</returns>
         public static Point2D GetScreenSpaceToRelative(Point2D point, int dimWidthPix, int dimHeightPix)
         {
             return new Point2D(
