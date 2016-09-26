@@ -30,7 +30,7 @@ namespace EyeTribe.ClientSdk.Utils
          */
         public static CalibQuality GetCalibQuality(CalibrationResult result)
         {
-            if (result != null && !float.IsNaN((float)result.AverageErrorDegree))
+            if (result != null && result.AverageErrorDegree > float.Epsilon)
             {
                 if (result.AverageErrorDegree < 0.5f)
                 {
