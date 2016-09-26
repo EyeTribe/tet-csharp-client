@@ -12,7 +12,7 @@ using EyeTribe.ClientSdk.Data;
 
 namespace EyeTribe.ClientSdk.Response
 {
-    public class TrackerGetResponseValues
+    internal class TrackerGetResponseValues
     {
         [DefaultValue(null)]
         [JsonProperty(PropertyName = Protocol.TRACKER_VERSION)]
