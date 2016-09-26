@@ -69,7 +69,7 @@
     <ItemGroup>
       <!-- Must be a fully qualified name -->
       <DoNotInternalizeAssemblies Include="Newtonsoft.Json" />
-      <DoNotInternalizeAssemblies Include="$(RootNamespace)" />
+      <DoNotInternalizeAssemblies Include="$(AssemblyName)" />
     </ItemGroup>
     <ILRepack Parallel="true" Internalize="true" InputAssemblies="@(InputAssemblies)" InternalizeExclude="@(DoNotInternalizeAssemblies)" TargetKind="Dll" OutputFile="$(OutputPath)\$(AssemblyName).dll" />
     <!-- Clean up unpacked DLLs-->

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace EyeTribe.ClientSdk.Response
 {
-    public class TrackerGetResponse : ResponseBase
+    internal class TrackerGetResponse : ResponseBase
     {
         public TrackerGetResponse() : base()
         {
