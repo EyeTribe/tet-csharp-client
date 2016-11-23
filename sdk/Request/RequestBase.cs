@@ -76,7 +76,17 @@ namespace EyeTribe.ClientSdk.Request
         }
 
         [JsonIgnore]
-        public Object AsyncLock;
+        private Object[] _Lock;
+
+        [JsonIgnore]
+        public Object[] AsyncLock
+        {
+            get {
+                if (null == _Lock)
+                    _Lock = new Object[1];
+                return _Lock;
+            }
+        }
 
         public RequestBase()
         {
@@ -90,18 +100,17 @@ namespace EyeTribe.ClientSdk.Request
 
         public void Finish()
         {
-            if(null != AsyncLock)
+            lock (AsyncLock)
             {
-                lock (AsyncLock)
-                {
-                    Monitor.Pulse(AsyncLock);
-                }
+                Monitor.Pulse(AsyncLock);
             }
         }
 
         public virtual object ParseJsonResponse(JObject response)
         {
-            return response.ToObject<T>();
+            object obj = response.ToObject<T>();
+            AsyncLock[0] = obj; //piggyback response in async lock
+            return obj;
         }
 
         public String ToJsonString()

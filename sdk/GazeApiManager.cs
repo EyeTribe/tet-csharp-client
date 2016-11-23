@@ -31,7 +31,7 @@ namespace EyeTribe.ClientSdk
     {
         #region Constants
 
-        internal const string DEFAULT_SERVER_HOST = "localhost";
+        internal const string DEFAULT_SERVER_HOST = "127.0.0.1";
         internal const int DEFAULT_SERVER_PORT = 6555;
 
         #endregion
@@ -198,7 +198,7 @@ namespace EyeTribe.ClientSdk
         {
             lock (_RequestQueue)
             {
-                foreach(RequestBase<ResponseBase> r in _RequestQueue.GetList())
+                foreach(IRequest r in _RequestQueue.GetList())
                 {
                     r.Cancel();
                 }
@@ -214,7 +214,7 @@ namespace EyeTribe.ClientSdk
             Request(tsr);
         }
 
-        public virtual void RequestAllStates()
+        public virtual Object[] RequestAllStates()
         {
             TrackerGetRequest tgr = new TrackerGetRequest();
 
@@ -234,6 +234,8 @@ namespace EyeTribe.ClientSdk
 			};
 
             Request(tgr);
+
+            return tgr.AsyncLock;
         }
 
         public void RequestCalibrationStates()
@@ -279,11 +281,9 @@ namespace EyeTribe.ClientSdk
             Request(tgr);
         }
 
-        public Object RequestCalibrationStart(int pointcount)
+        public Object[] RequestCalibrationStart(int pointcount)
         {
             CalibrationStartRequest csr = new CalibrationStartRequest(pointcount);
-
-            csr.AsyncLock = new Object();
 
             Request(csr);
 
@@ -304,13 +304,11 @@ namespace EyeTribe.ClientSdk
             Request(cpe);
         }
 
-        public Object RequestCalibrationAbort()
+        public Object[] RequestCalibrationAbort()
         {
             RequestBase<ResponseBase> ca = new RequestBase<ResponseBase>();
             ca.Category = Protocol.CATEGORY_CALIBRATION;
             ca.Request = Protocol.CALIBRATION_REQUEST_ABORT;
-
-            ca.AsyncLock = new Object();
 
             Request(ca);
 
@@ -326,7 +324,7 @@ namespace EyeTribe.ClientSdk
             Request(cc);
         }
 
-        public Object RequestScreenSwitch(int screenIndex, int screenResW, int screenResH, float screenPsyW, float screenPsyH)
+        public Object[] RequestScreenSwitch(int screenIndex, int screenResW, int screenResH, float screenPsyW, float screenPsyH)
         {
             TrackerSetRequest tsr = new TrackerSetRequest();
 
@@ -336,22 +334,18 @@ namespace EyeTribe.ClientSdk
             tsr.Values.ScreenPhysicalWidth = screenPsyW;
             tsr.Values.ScreenPhysicalHeight = screenPsyH;
 
-            tsr.AsyncLock = new Object();
-
             Request(tsr);
 
             return tsr.AsyncLock;
         }
 
-        public Object RequestFrame()
+        public Object[] RequestFrame()
         {
             TrackerGetRequest tgr = new TrackerGetRequest();
 
             tgr.Values = new String[] { 
                 Protocol.TRACKER_FRAME 
             };
-
-            tgr.AsyncLock = new Object();
 
             Request(tgr);
 
@@ -470,7 +464,7 @@ namespace EyeTribe.ClientSdk
                                     }
                                     else if (null != (response = _NetworkLayer.ParseIncomingProcessResponse(json, value)))
                                     { 
-                                        // We allow the network layer extensions to optinally handle the process reponse
+                                        // We allow the network layer extensions to optionally handle the process reponse
                                     }
                                     else
                                     {

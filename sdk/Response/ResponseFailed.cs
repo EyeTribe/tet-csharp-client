@@ -20,4 +20,10 @@ namespace EyeTribe.ClientSdk.Response
         [JsonProperty(PropertyName = Protocol.KEY_VALUES)]
         public ResponseFailedValues Values { set; get; }
     }
+
+    internal class ResponseFailedValues
+    {
+        [JsonProperty(PropertyName = Protocol.KEY_STATUSMESSAGE)]
+        public string StatusMessage { set; get; }
+    }
 }

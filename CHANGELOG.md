@@ -1,7 +1,13 @@
 # Change Log #
 ---
 
-Version 0.9.77.3 (2016-09-26)
+Version 0.9.77.6 (2016-11-23)
+---
+- Fixed default network state
+- Merged request/response value classes
+- Improved initialization process
+
+Version 0.9.77.5 (2016-09-26)
 ---
 - Added support for listening to any calibration state change (ICalibrationStateListener)
 - Runtime 'debug mode' now controlled through GazeManager.DebugMode 
