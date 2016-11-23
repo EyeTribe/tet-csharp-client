@@ -8,6 +8,7 @@
 
 using Newtonsoft.Json;
 using EyeTribe.ClientSdk.Request;
+using EyeTribe.ClientSdk.Data;
 
 namespace EyeTribe.ClientSdk.Response
 {
@@ -20,5 +21,11 @@ namespace EyeTribe.ClientSdk.Response
 
         [JsonProperty(PropertyName = Protocol.KEY_VALUES)]
         public CalibrationPointEndResponseValues Values { set; get; }
+    }
+
+    internal class CalibrationPointEndResponseValues
+    {
+        [JsonProperty(PropertyName = Protocol.CALIBRATION_CALIBRESULT)]
+        public CalibrationResult CalibrationResult { set; get; }
     }
 }

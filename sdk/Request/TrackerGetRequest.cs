@@ -43,6 +43,8 @@ namespace EyeTribe.ClientSdk.Request
                 }
             }
 
+            AsyncLock[0] = true;
+
             return tgr;
         }
     }
