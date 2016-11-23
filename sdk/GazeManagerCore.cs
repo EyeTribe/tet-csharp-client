@@ -92,7 +92,7 @@ namespace EyeTribe.ClientSdk
             VERSION_1_0 = 1
         }
 
-        private void ResetEnums() 
+        private void ResetEnums()
         {
             Trackerstate = TrackerState.TRACKER_UNDEFINED;
             Framerate = FrameRate.FPS_UNDEFINED;
@@ -108,8 +108,6 @@ namespace EyeTribe.ClientSdk
         protected bool IsActive;
 
         protected static readonly Object InitializationLock = new Object();
-        protected static bool IsInitializing;
-        protected static bool IsInitialized;
 
         protected int SampledCalibrationPoints;
         protected int TotalCalibrationPoints;
@@ -248,7 +246,7 @@ namespace EyeTribe.ClientSdk
         /// Length of a heartbeat in milliseconds. 
         /// The EyeTribe Server defines the desired length of a heartbeat and is in
         /// this implementation automatically acquired through the Tracker API.
-        [Obsolete("Deprecated, as of EyeTribe Server v.0.9.77 using Heartbeat no longer has any effect", false)] 
+        [Obsolete("Deprecated, as of EyeTribe Server v.0.9.77 using Heartbeat no longer has any effect", false)]
         internal int HeartbeatMillis
         {
             get;
@@ -434,22 +432,6 @@ namespace EyeTribe.ClientSdk
                                         ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnGazeFrame), new Object[] { listener, gd });
                                     }
                                 }
-
-                                //Handle initialization
-                                if (IsInitializing)
-                                {
-                                    //we make sure response is inital get request and not a 'push mode' frame
-                                    if (null == tgr.Values.Frame)
-                                    {
-                                        lock (InitializationLock)
-                                        {
-                                            IsInitialized = true;
-                                            IsInitializing = false;
-
-                                            Monitor.Pulse(InitializationLock);
-                                        }
-                                    }
-                                }
                             }
                             else if (response.Request.Equals(Protocol.TRACKER_REQUEST_SET))
                             {
@@ -628,10 +610,10 @@ namespace EyeTribe.ClientSdk
 
                             break;
                     }
-
-                    if (null != request)
-                        request.Finish();
                 }
+
+                if (null != request)
+                    request.Finish();
             }
             catch (Exception e)
             {
@@ -725,12 +707,9 @@ namespace EyeTribe.ClientSdk
         /// </summary>
         public void OnGazeApiConnectionStateChanged(bool isConnected)
         {
-            if (!IsInitializing)
+            foreach (IConnectionStateListener listener in ConnectionStateListeners)
             {
-                foreach (IConnectionStateListener listener in ConnectionStateListeners)
-                {
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnConnectionStateChanged), new Object[] { listener, isConnected });
-                }
+                ThreadPool.QueueUserWorkItem(new WaitCallback(HandleOnConnectionStateChanged), new Object[] { listener, isConnected });
             }
         }
 
@@ -990,49 +969,45 @@ namespace EyeTribe.ClientSdk
                 {
                     if (!IsActivated)
                     {
-                        // has calling thread already started an activation process?
-                        if (!IsInitializing)
+                        int retryDelay = (int)Math.Round((float)timeout / retries);
+
+                        if (_IsDebug)
+                            Debug.WriteLine("retryDelay: " + retryDelay);
+
+                        try
                         {
-                            int retryDelay = (int)Math.Round((float)timeout / retries);
+                            int numRetries = 0;
 
-                            if (_IsDebug)
-                                Debug.WriteLine("retryDelay: " + retryDelay);
-
-                            try
+                            while (numRetries++ < retries)
                             {
-                                int numRetries = 0;
+                                long timstampStart = (long)((double)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 
-                                while (numRetries++ < retries)
+                                if (Initialize(apiVersion, hostname, portnumber, retryDelay))
                                 {
-                                    long timstampStart = (long)((double)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+                                    break; // success, break loop
+                                }
+                                else
+                                {
+                                    // Short delay before retrying
+                                    long timePassed = (long)((double)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - timstampStart;
 
-                                    if (Initialize(apiVersion, hostname, portnumber, retryDelay))
+                                    if (timePassed < retryDelay)
                                     {
-                                        break; // success, break loop
+                                        Thread.Sleep((int)(retryDelay - timePassed));
                                     }
-                                    else
-                                    {
-                                        // Short delay before retrying
-                                        long timePassed = (long)((double)DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - timstampStart;
 
-                                        if (timePassed < retryDelay)
-                                        {
-                                            Thread.Sleep((int)(retryDelay - timePassed));
-                                        }
-
-                                        if (_IsDebug)
-                                            Debug.WriteLine("Connection Failed, num retry: " + numRetries);
-                                    }
+                                    if (_IsDebug)
+                                        Debug.WriteLine("Connection Failed, num retry: " + numRetries);
                                 }
                             }
-                            catch (ThreadInterruptedException tie)
-                            {
-                                Debug.WriteLine("EyeTribe Server connection attempt interrupted: " + tie.Message);
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.WriteLine("Exception while establishing EyeTribe Server connection: " + e.Message);
-                            }
+                        }
+                        catch (ThreadInterruptedException tie)
+                        {
+                            Debug.WriteLine("EyeTribe Server connection attempt interrupted: " + tie.Message);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine("Exception while establishing EyeTribe Server connection: " + e.Message);
                         }
                     }
                 }
@@ -1041,10 +1016,8 @@ namespace EyeTribe.ClientSdk
             });
         }
 
-        private Boolean Initialize(ApiVersion apiVersion, string hostname, int portnumber, long timeOut)
+        protected virtual Boolean Initialize(ApiVersion apiVersion, string hostname, int portnumber, long timeOut)
         {
-            IsInitializing = true;
-
             try
             {
                 // initialize networking
@@ -1053,14 +1026,20 @@ namespace EyeTribe.ClientSdk
                 else
                     ApiManager.Close();
 
+                var IsInitialized = false;
+
                 if (ApiManager.Connect(hostname, portnumber, timeOut))
                 {
                     ApiManager.RequestTracker(apiVersion);
-                    ApiManager.RequestAllStates();
+                    var asyncLock = ApiManager.RequestAllStates();
 
-                    // We wait until above requests have been handled by
-                    // server or timeout occurs
-                    Monitor.Wait(InitializationLock, (int)timeOut);
+                    // We await gaze manager state initialization before proceeding
+                    lock (asyncLock)
+                    {
+                        Monitor.Wait(asyncLock, (int)timeOut);
+
+                        IsInitialized = (bool)asyncLock[0];
+                    }
 
                     if (IsInitialized)
                     {
@@ -1082,7 +1061,7 @@ namespace EyeTribe.ClientSdk
             {
                 HandleInitFailure();
 
-                Console.WriteLine("Error initializing GazeManager: " + e.StackTrace);
+                Console.WriteLine("Error initializing GazeManager: " + e.Message + e.StackTrace);
             }
 
             return IsActivated;
@@ -1090,12 +1069,9 @@ namespace EyeTribe.ClientSdk
 
         internal void HandleInitFailure()
         {
-            IsInitializing = false;
-
             if (null != ApiManager)
                 ApiManager.Close();
 
-            IsInitialized = false;
             IsActive = false;
         }
 
@@ -1108,8 +1084,6 @@ namespace EyeTribe.ClientSdk
             //lock to ensure that state changing method calls are synchronous
             lock (InitializationLock)
             {
-                IsInitializing = false;
-
                 ClearListeners();
 
                 if (null != ApiManager)
@@ -1117,7 +1091,6 @@ namespace EyeTribe.ClientSdk
 
                 ResetEnums();
 
-                IsInitialized = false;
                 IsActive = false;
             }
         }
@@ -1443,9 +1416,9 @@ namespace EyeTribe.ClientSdk
         {
             return Task.Factory.StartNew<Boolean>(() =>
             {
-                if (IsActivated) 
+                if (IsActivated)
                 {
-                    Object asyncLock = ApiManager.RequestScreenSwitch(screenIndex, screenResW, screenResH, screenPsyW, screenPsyH);
+                    Object[] asyncLock = ApiManager.RequestScreenSwitch(screenIndex, screenResW, screenResH, screenPsyW, screenPsyH);
 
                     lock (asyncLock)
                     {
@@ -1464,12 +1437,12 @@ namespace EyeTribe.ClientSdk
                         }
                     }
 
-                    return this.ScreenIndex == screenIndex && 
-                        this.ScreenResolutionWidth == screenResW && 
-                        this.ScreenResolutionHeight == screenResH && 
-                        this.ScreenPhysicalWidth == screenPsyW && 
+                    return this.ScreenIndex == screenIndex &&
+                        this.ScreenResolutionWidth == screenResW &&
+                        this.ScreenResolutionHeight == screenResH &&
+                        this.ScreenPhysicalWidth == screenPsyW &&
                         this.ScreenPhysicalHeight == screenPsyH;
-                }    
+                }
 
                 Console.WriteLine("EyeTribe C# SDK not activated!");
 
@@ -1528,7 +1501,7 @@ namespace EyeTribe.ClientSdk
                         TotalCalibrationPoints = numCalibrationPoints;
                         _CalibrationProcessListener = listener;
 
-                        Object asyncLock = ApiManager.RequestCalibrationStart(numCalibrationPoints);
+                        Object[] asyncLock = ApiManager.RequestCalibrationStart(numCalibrationPoints);
 
                         lock (asyncLock)
                         {
@@ -1622,11 +1595,11 @@ namespace EyeTribe.ClientSdk
         {
             return Task.Factory.StartNew<Boolean>(() =>
             {
-                if (IsActivated) 
+                if (IsActivated)
                 {
                     if (IsCalibrating)
                     {
-                        Object asyncLock = ApiManager.RequestCalibrationAbort();
+                        Object[] asyncLock = ApiManager.RequestCalibrationAbort();
 
                         lock (asyncLock)
                         {
